@@ -38,18 +38,36 @@ export default function GuessContribute({
   if (!token) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Authentication Required</DialogTitle>
+        <DialogContent className="sm:max-w-[425px] p-8">
+          <DialogHeader className="text-left mb-6">
+            <DialogTitle className="text-2xl font-bold">
+              Login to continue
+            </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col items-center justify-center p-8 space-y-4">
-            <h2 className="text-xl font-semibold">
-              Please log in to contribute
-            </h2>
-            <p className="text-gray-600">
-              You need to be logged in to record audio contributions.
-            </p>
-            <Button onClick={handleLogin}>Login</Button>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <p className="text-base text-foreground font-medium">
+                Please log in to contribute
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                You need to be logged in to record audio contributions.
+              </p>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleLogin}
+                className="flex-1"
+              >
+                Login
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
