@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback, use, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -55,6 +56,7 @@ export default function ResultsPage({
     lexemeTranslations,
   } = useApiWithStore();
 
+
   const [sourceLexemeDetails, setSourceLexemeDetails] = useState<
     GlossWithSense[]
   >([]);
@@ -66,10 +68,36 @@ export default function ResultsPage({
   >([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
+  
+
+  // Cache for filtered results to prevent unnecessary API calls
+  const [dataCache, setDataCache] = useState<{
+    sourceLang: GlossWithSense[];
+    target1Lang: GlossWithSense[];
+    target2Lang: GlossWithSense[];
+    cacheKey: string;
+  } | null>(null);
+  
+  // Generate cache key based on lexeme ID and language selections
+  const cacheKey = useMemo(() => {
+    if (!selectedLexeme?.lexeme?.id || !selectedSourceLanguage || !selectedTargetLanguage1 || !selectedTargetLanguage2) {
+      return "";
+    }
+    return `${selectedLexeme.lexeme.id}_${selectedSourceLanguage.lang_code}_${selectedTargetLanguage1.lang_code}_${selectedTargetLanguage2.lang_code}`;
+  }, [selectedLexeme?.lexeme?.id, selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code]);
+
+
+  // Check if we have cached data for current selection
+  const hasValidCache = useMemo(() => {
+    return dataCache?.cacheKey === cacheKey && cacheKey !== "";
+  }, [dataCache, cacheKey]);
+  
   const areLanguagesSelected =
     selectedSourceLanguage &&
     selectedTargetLanguage1 &&
     selectedTargetLanguage2;
+
+
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [open, setOpen] = useState(false);
   const [contributingLanguage, setContributingLanguage] =
@@ -77,6 +105,14 @@ export default function ResultsPage({
   const [contributingType, setContributingType] = useState<
     "description" | "audio" | "translation" | null
   >(null);
+
+  // Clear cache when language selections change (but not when just switching tabs)
+  useEffect(() => {
+    if (selectedSourceLanguage && selectedTargetLanguage1 && selectedTargetLanguage2) {
+      // If languages have changed, clear the cache to force new API call
+      setDataCache(null);
+    }
+  }, [selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code]);
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
 
@@ -97,31 +133,50 @@ export default function ResultsPage({
     }
   }, [clickedLexeme]);
 
+
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
       return;
     }
 
     setSingleLexemeObj(selectedLexeme.lexeme);
-    setSourceLexemeDetails(
-      selectedLexeme.glosses.filter(
+
+    // Use cached data if available, otherwise filter and cache
+    if (hasValidCache && dataCache) {
+      setSourceLexemeDetails(dataCache.sourceLang);
+      setTarget1LexemeDetails(dataCache.target1Lang);
+      setTarget2LexemeDetails(dataCache.target2Lang);
+    } else {
+      // Filter glosses by language and cache the results
+      const sourceLang = selectedLexeme.glosses.filter(
         (gloss: GlossWithSense) =>
           gloss.gloss.language === selectedSourceLanguage?.lang_code
-      )
-    );
-    setTarget1LexemeDetails(
-      selectedLexeme.glosses.filter(
+      );
+      const target1Lang = selectedLexeme.glosses.filter(
         (gloss: GlossWithSense) =>
           gloss.gloss.language === selectedTargetLanguage1?.lang_code
-      )
-    );
-    setTarget2LexemeDetails(
-      selectedLexeme.glosses.filter(
+      );
+      const target2Lang = selectedLexeme.glosses.filter(
         (gloss: GlossWithSense) =>
           gloss.gloss.language === selectedTargetLanguage2?.lang_code
-      )
-    );
-  }, [selectedLexeme]);
+      );
+
+      setSourceLexemeDetails(sourceLang);
+      setTarget1LexemeDetails(target1Lang);
+      setTarget2LexemeDetails(target2Lang);
+
+      // Update cache if we have a valid cache key
+      if (cacheKey) {
+        setDataCache({
+          sourceLang,
+          target1Lang,
+          target2Lang,
+          cacheKey,
+        });
+      }
+    }
+  }, [selectedLexeme, selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code, hasValidCache, dataCache, cacheKey]);
+
 
   const handleGetLexemeDetails = useCallback(async () => {
     if (
@@ -134,6 +189,12 @@ export default function ResultsPage({
           "Please select source and target languages to get details.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Skip API call if we have valid cached data for this language combination
+    if (hasValidCache && dataCache) {
+      console.log("Using cached data, skipping API call");
       return;
     }
 
@@ -152,6 +213,8 @@ export default function ResultsPage({
     selectedTargetLanguage2?.lang_code,
     getLexemeDetails,
     getLexemeTranslations,
+    hasValidCache,
+    dataCache,
   ]);
 
   const handleContribute = (
@@ -166,7 +229,11 @@ export default function ResultsPage({
     setContributingType(type);
   };
 
+
   const onContributeSuccess = async () => {
+    // Clear cache since new data has been added
+    setDataCache(null);
+    
     // toast success
     toast({
       title: "Contribution saved",
