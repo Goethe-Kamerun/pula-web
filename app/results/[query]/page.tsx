@@ -208,6 +208,14 @@ export default function ResultsPage({
                       (lang) => lang.lang_code === langCode
                     );
                     setSelectedSourceLanguage(language || null);
+
+                    // Clear targets if they match the new source
+                    if (selectedTargetLanguage1?.lang_code === langCode) {
+                      setSelectedTargetLanguage1(null);
+                    }
+                    if (selectedTargetLanguage2?.lang_code === langCode) {
+                      setSelectedTargetLanguage2(null);
+                    }
                   }}
                   placeholder="Select source language"
                   label="Source Language"
@@ -219,10 +227,20 @@ export default function ResultsPage({
                       (lang) => lang.lang_code === langCode
                     );
                     setSelectedTargetLanguage1(language || null);
+
+                    // Clear target 2 if it matches the new target 1
+                    if (selectedTargetLanguage2?.lang_code === langCode) {
+                      setSelectedTargetLanguage2(null);
+                    }
                   }}
                   placeholder="Select target language 1"
                   label="Target Language 1"
                   span="*"
+                  excludedLanguages={
+                    selectedSourceLanguage
+                      ? [selectedSourceLanguage.lang_code]
+                      : []
+                  }
                 />
                 <LanguageSelect
                   value={selectedTargetLanguage2?.lang_code || ""}
@@ -235,6 +253,14 @@ export default function ResultsPage({
                   placeholder="Select target language 2"
                   label="Target Language 2"
                   span="*"
+                  excludedLanguages={[
+                    ...(selectedSourceLanguage
+                      ? [selectedSourceLanguage.lang_code]
+                      : []),
+                    ...(selectedTargetLanguage1
+                      ? [selectedTargetLanguage1.lang_code]
+                      : []),
+                  ]}
                 />
               </div>
             </div>
