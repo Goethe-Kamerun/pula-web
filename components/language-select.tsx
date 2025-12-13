@@ -1,14 +1,24 @@
 "use client";
 
+import * as React from "react";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface LanguageSelectProps {
   value: string;
@@ -27,6 +37,7 @@ export default function LanguageSelect({
   span,
   excludedLanguages = [],
 }: LanguageSelectProps) {
+  const [open, setOpen] = React.useState(false);
   const { languages, loading, error } = useLanguageStore();
 
   // Filter languages based on excluded languages
@@ -34,9 +45,11 @@ export default function LanguageSelect({
     (language) => !excludedLanguages.includes(language.lang_code)
   );
 
+  const selectedLanguage = languages.find((lang) => lang.lang_code === value);
+
   return (
-    <div>
-      <div className="flex items-center mb-2">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center">
         {label && (
           <>
             <label
@@ -51,30 +64,53 @@ export default function LanguageSelect({
         )}
       </div>
 
-      <Select value={value || undefined} onValueChange={onChange}>
-        <SelectTrigger
-          className="w-full bg-white"
-          style={{
-            borderColor: "#a2a9b1",
-            color: value ? "#222222" : "#72777d",
-          }}
-        >
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent className="max-h-60">
-          {filteredLanguages.length === 0 ? (
-            <div className="p-2 text-sm text-gray-500">
-              No languages available
-            </div>
-          ) : (
-            filteredLanguages.map((language) => (
-              <SelectItem key={language.lang_code} value={language.lang_code}>
-                {language.lang_label}
-              </SelectItem>
-            ))
-          )}
-        </SelectContent>
-      </Select>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between bg-white font-normal"
+            style={{
+              borderColor: "#a2a9b1",
+              color: value ? "#222222" : "#72777d",
+            }}
+          >
+            {selectedLanguage ? selectedLanguage.lang_label : placeholder}
+            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+          <Command>
+            <CommandInput placeholder="Search language..." />
+            <CommandList>
+              <CommandEmpty>No language found.</CommandEmpty>
+              <CommandGroup>
+                {filteredLanguages.map((language) => (
+                  <CommandItem
+                    key={language.lang_code}
+                    value={language.lang_label}
+                    onSelect={() => {
+                      onChange(language.lang_code);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === language.lang_code
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {language.lang_label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
