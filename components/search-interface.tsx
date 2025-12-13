@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LanguageSelect from "@/components/language-select";
 import SearchInput from "@/components/search-input";
@@ -54,6 +54,24 @@ export default function SearchInterface() {
     }
   };
 
+  // Determine if fields should be disabled
+  const isDestination1Disabled = !selectedSourceLanguage;
+  const isDestination2Disabled = !selectedTargetLanguage1;
+
+  // Clear dependent fields when parent field is cleared
+  useEffect(() => {
+    if (!selectedSourceLanguage) {
+      setSelectedTargetLanguage1(null);
+      setSelectedTargetLanguage2(null);
+    }
+  }, [selectedSourceLanguage, setSelectedTargetLanguage1, setSelectedTargetLanguage2]);
+
+  useEffect(() => {
+    if (!selectedTargetLanguage1) {
+      setSelectedTargetLanguage2(null);
+    }
+  }, [selectedTargetLanguage1, setSelectedTargetLanguage2]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Page Title */}
@@ -92,6 +110,7 @@ export default function SearchInterface() {
             placeholder="Select target language 1"
             label="Target Language 1"
             span="*"
+            disabled={isDestination1Disabled}
           />
           <LanguageSelect
             value={selectedTargetLanguage2?.lang_code || ""}
@@ -104,6 +123,7 @@ export default function SearchInterface() {
             placeholder="Select target language 2"
             label="Target Language 2"
             span="*"
+            disabled={isDestination2Disabled}
           />
         </div>
       </div>
