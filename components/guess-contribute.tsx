@@ -1,9 +1,11 @@
 "use client";
 
+import React from "react";
 import { useEffect } from "react";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { Button } from "@/components/ui/button";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
+import { Tooltip } from "@/components/ui/tooltip-info";
 import {
   Dialog,
   DialogContent,
