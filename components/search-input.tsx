@@ -71,8 +71,13 @@ export default function SearchInput({
       return;
     }
 
-    debouncedSearch(value);
-    setShowSuggestions(true);
+    const handler = setTimeout(() => {
+      debouncedSearch(value);
+      setShowSuggestions(true);
+    }, 500);
+
+    // Cleanup timeout if value changes before 500ms
+    return () => clearTimeout(handler);
   }, [value, debouncedSearch]);
 
   useEffect(() => {
