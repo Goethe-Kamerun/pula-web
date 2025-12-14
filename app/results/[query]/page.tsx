@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback, use, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -53,6 +53,7 @@ export default function ResultsPage({
     setSelectedTargetLanguage2,
     query,
     lexemeTranslations,
+    isSearchReady,
   } = useApiWithStore();
 
   const [sourceLexemeDetails, setSourceLexemeDetails] = useState<
@@ -66,10 +67,8 @@ export default function ResultsPage({
   >([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
-  const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+  // const areLanguagesSelected =
+  //   selectedSourceLanguage && selectedTargetLanguage1;
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [open, setOpen] = useState(false);
   const [contributingLanguage, setContributingLanguage] =
@@ -79,6 +78,7 @@ export default function ResultsPage({
   >(null);
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
+  const prevTarget2Ref = useRef<typeof selectedTargetLanguage2 | null>(null);
 
   useEffect(() => {
     hydrate();
@@ -124,14 +124,11 @@ export default function ResultsPage({
   }, [selectedLexeme]);
 
   const handleGetLexemeDetails = useCallback(async () => {
-    if (
-      !selectedSourceLanguage ||
-      (!selectedTargetLanguage1 && !selectedTargetLanguage2)
-    ) {
+    if (!selectedSourceLanguage || !selectedTargetLanguage1) {
       toast({
         title: "Languages required",
         description:
-          "Please select source and target languages to get details.",
+          "Please select a source language and at least one target language to get details.",
         variant: "destructive",
       });
       return;
@@ -152,6 +149,25 @@ export default function ResultsPage({
     selectedTargetLanguage2?.lang_code,
     getLexemeDetails,
     getLexemeTranslations,
+  ]);
+
+  useEffect(() => {
+    if (
+      !prevTarget2Ref.current &&
+      selectedTargetLanguage2 &&
+      clickedLexeme?.id &&
+      selectedSourceLanguage &&
+      selectedTargetLanguage1
+    ) {
+      handleGetLexemeDetails();
+    }
+    prevTarget2Ref.current = selectedTargetLanguage2 || null;
+  }, [
+    selectedTargetLanguage2,
+    clickedLexeme,
+    selectedSourceLanguage,
+    selectedTargetLanguage1,
+    handleGetLexemeDetails,
   ]);
 
   const handleContribute = (
@@ -233,14 +249,13 @@ export default function ResultsPage({
                     setSelectedTargetLanguage2(language || null);
                   }}
                   placeholder="Select target language 2"
-                  label="Target Language 2"
-                  span="*"
+                  label="Target Language 2 (optional)"
                 />
               </div>
             </div>
 
             <SearchInput
-              disabled={!areLanguagesSelected}
+              disabled={!isSearchReady}
               onSearch={(v) => null}
               value={searchQuery}
               onChange={setSearchQuery}
@@ -277,11 +292,11 @@ export default function ResultsPage({
                   glossesWithSense={sourceLexemeDetails}
                   lexemeDetail={singleLexemeObj}
                   translation={null}
-                    // lexemeTranslations &&
-                    // lexemeTranslations.find(
-                    //   (t: LexemeTranslation) =>
-                    //     t.trans_language === selectedSourceLanguage?.lang_code
-                    // )
+                  // lexemeTranslations &&
+                  // lexemeTranslations.find(
+                  //   (t: LexemeTranslation) =>
+                  //     t.trans_language === selectedSourceLanguage?.lang_code
+                  // )
                   // }
                   title={
                     selectedSourceLanguage?.lang_label || "Source Language"
