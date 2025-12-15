@@ -27,8 +27,7 @@ export default function SearchInterface() {
 
   const areLanguagesSelected =
     selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+    selectedTargetLanguage1;
   // const areLanguagesSelected = true;
 
   // Load languages when component mounts

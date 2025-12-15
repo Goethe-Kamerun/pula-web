@@ -68,8 +68,7 @@ export default function ResultsPage({
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
   const areLanguagesSelected =
     selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+    selectedTargetLanguage1;
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [open, setOpen] = useState(false);
   const [contributingLanguage, setContributingLanguage] =
@@ -126,7 +125,7 @@ export default function ResultsPage({
   const handleGetLexemeDetails = useCallback(async () => {
     if (
       !selectedSourceLanguage ||
-      (!selectedTargetLanguage1 && !selectedTargetLanguage2)
+      !selectedTargetLanguage1
     ) {
       toast({
         title: "Languages required",

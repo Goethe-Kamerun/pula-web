@@ -165,8 +165,7 @@ export const useApiWithStore = () => {
     if (
       !clickedLexeme ||
       !selectedSourceLanguage ||
-      !selectedTargetLanguage1 ||
-      !selectedTargetLanguage2
+      !selectedTargetLanguage1
     ) {
       return;
     }
@@ -227,8 +226,7 @@ export const useApiWithStore = () => {
     if (
       !clickedLexeme ||
       !selectedSourceLanguage ||
-      !selectedTargetLanguage1 ||
-      !selectedTargetLanguage2
+      !selectedTargetLanguage1
     ) {
       return;
     }
