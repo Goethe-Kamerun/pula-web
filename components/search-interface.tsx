@@ -57,7 +57,7 @@ export default function SearchInterface() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Page Title */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-12" data-tour="page-title">
         <h1 className="text-3xl font-normal mb-4" style={{ color: "#222222" }}>
           Explore words and phrases in other languages
         </h1>
@@ -70,17 +70,19 @@ export default function SearchInterface() {
       {/* Language Selection */}
       <div className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <LanguageSelect
-            value={selectedSourceLanguage?.lang_code || ""}
-            onChange={(langCode) => {
-              const language = languages.find(
-                (lang) => lang.lang_code === langCode
-              );
-              setSelectedSourceLanguage(language || null);
-            }}
-            placeholder="Select source language"
-            label="Source Language"
-          />
+          <div data-tour="source-language">
+            <LanguageSelect
+              value={selectedSourceLanguage?.lang_code || ""}
+              onChange={(langCode) => {
+                const language = languages.find(
+                  (lang) => lang.lang_code === langCode
+                );
+                setSelectedSourceLanguage(language || null);
+              }}
+              placeholder="Select source language"
+              label="Source Language"
+            />
+          </div>
           <LanguageSelect
             value={selectedTargetLanguage1?.lang_code || ""}
             onChange={(langCode) => {
@@ -93,23 +95,25 @@ export default function SearchInterface() {
             label="Target Language 1"
             span="*"
           />
-          <LanguageSelect
-            value={selectedTargetLanguage2?.lang_code || ""}
-            onChange={(langCode) => {
-              const language = languages.find(
-                (lang) => lang.lang_code === langCode
-              );
-              setSelectedTargetLanguage2(language || null);
-            }}
-            placeholder="Select target language 2"
-            label="Target Language 2"
-            span="*"
-          />
+          <div data-tour="target-languages">
+            <LanguageSelect
+              value={selectedTargetLanguage2?.lang_code || ""}
+              onChange={(langCode) => {
+                const language = languages.find(
+                  (lang) => lang.lang_code === langCode
+                );
+                setSelectedTargetLanguage2(language || null);
+              }}
+              placeholder="Select target language 2"
+              label="Target Language 2"
+              span="*"
+            />
+          </div>
         </div>
       </div>
 
       {/* Search Input */}
-      <div className="mb-8">
+      <div className="mb-8" data-tour="search-input">
         <SearchInput
           disabled={!areLanguagesSelected}
           onSearch={handleSearch}
