@@ -5,15 +5,15 @@ import { Menu, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApiWithStore } from "@/hooks/useApiWithStore"
 import { useAuthStore } from "@/lib/stores/authStore"
-import type { AuthState } from '@/lib/stores/authStore';
-
+import LoginPromptModal from "./login-prompt-modal";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const { login, logout } = useApiWithStore();
-  const token = useAuthStore((state: AuthState ) => state.token);
-  const username = useAuthStore((state: AuthState) => state.username);
-  const hydrate = useAuthStore((state: AuthState ) => state.hydrate);
+  const token = useAuthStore((state) => state.token);
+  const username = useAuthStore((state) => state.username);
+  const hydrate = useAuthStore((state) => state.hydrate);
 
   useEffect(() => {
     hydrate();
@@ -44,6 +44,16 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     window.location.href = "/";
+  }
+
+  const handleRecordingStudioClick = () => {
+    if (!token) {
+      // User is not logged in, show login modal
+      setIsLoginModalOpen(true);
+    } else {
+      // User is logged in, navigate to Recording Studio
+      window.location.href = "/contribute";
+    }
   }
 
   return (
@@ -89,25 +99,25 @@ export default function Header() {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            <a
-              href="/contribute"
+            <button
+              onClick={handleRecordingStudioClick}
               className="text-sm font-medium transition-colors hover:underline"
               style={{ color: "#0645ad" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#0b0080")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#0645ad")}
             >
               Record Studio
-            </a>
+            </button>
             {username ? (
               <div className="flex items-center space-x-2">
-              <User className="w-5 h-5" style={{ color: "#72777d" }} />
-              <span className="text-sm font-medium" style={{ color: "#222222" }}>
-                {username}
-              </span>
+                <User className="w-5 h-5" style={{ color: "#72777d" }} />
+                <span className="text-sm font-medium" style={{ color: "#222222" }}>
+                  {username}
+                </span>
               </div>
             ) : (
               <button className="p-2 transition-colors" style={{ color: "#72777d" }}>
-              <User className="w-5 h-5" />
+                <User className="w-5 h-5" />
               </button>
             )}
             <Button
@@ -144,17 +154,23 @@ export default function Header() {
               >
                 About
               </a>
-              <a
-                href="#"
-                className="text-sm font-medium py-2 transition-colors hover:underline"
+              <button
+                onClick={handleRecordingStudioClick}
+                className="text-sm font-medium py-2 transition-colors hover:underline text-left"
                 style={{ color: "#0645ad" }}
               >
-                Contribute
-              </a>
+                Record Studio
+              </button>
             </nav>
           </div>
         )}
       </div>
+      
+      {/* Login Prompt Modal */}
+      <LoginPromptModal
+        open={isLoginModalOpen}
+        onOpenChange={setIsLoginModalOpen}
+      />
     </header>
   )
 }
