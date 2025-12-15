@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
 
 export default function SearchInterface() {
-  // const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { toast } = useToast();
   const {
@@ -25,16 +25,19 @@ export default function SearchInterface() {
     clickedLexeme,
   } = useApiWithStore();
 
+  const isSourceSelected = Boolean(selectedSourceLanguage);
+  // Allow already-hydrated values to keep fields enabled on return visits
+  const isTargetLanguage1Enabled =
+    isSourceSelected || Boolean(selectedTargetLanguage1);
+  const isTargetLanguage2Enabled =
+    Boolean(selectedTargetLanguage1) || Boolean(selectedTargetLanguage2);
   const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
-  // const areLanguagesSelected = true;
+    isSourceSelected && Boolean(selectedTargetLanguage1);
 
   // Load languages when component mounts
   useEffect(() => {
     getLanguages();
-  }, []);
+  }, [getLanguages]);
 
   useEffect(() => {
     if (clickedLexeme) {
@@ -43,15 +46,36 @@ export default function SearchInterface() {
   }, [clickedLexeme]);
 
   const handleSearch = (query: string) => {
-    if (!areLanguagesSelected) {
+    if (!selectedSourceLanguage) {
       toast({
-        title: "Languages required",
-        description:
-          "You must select a source language and at least one target language first.",
+        title: "Select a source language",
+        description: "Choose a source language to continue.",
         variant: "destructive",
       });
       return;
     }
+
+    if (!selectedTargetLanguage1) {
+      toast({
+        title: "Select a destination language",
+        description:
+          "Pick destination language 1 before searching. Destination 2 is optional.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const trimmed = query.trim();
+    if (!trimmed) {
+      toast({
+        title: "Enter a search term",
+        description: "Type something to search.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    router.push(`/results/${encodeURIComponent(trimmed)}`);
   };
 
   return (
@@ -83,6 +107,7 @@ export default function SearchInterface() {
           />
           <LanguageSelect
             value={selectedTargetLanguage1?.lang_code || ""}
+            disabled={!isTargetLanguage1Enabled}
             onChange={(langCode) => {
               const language = languages.find(
                 (lang) => lang.lang_code === langCode
@@ -95,6 +120,7 @@ export default function SearchInterface() {
           />
           <LanguageSelect
             value={selectedTargetLanguage2?.lang_code || ""}
+            disabled={!isTargetLanguage2Enabled}
             onChange={(langCode) => {
               const language = languages.find(
                 (lang) => lang.lang_code === langCode
@@ -113,8 +139,8 @@ export default function SearchInterface() {
         <SearchInput
           disabled={!areLanguagesSelected}
           onSearch={handleSearch}
-          value={""}
-          onChange={(v) => null}
+          value={searchQuery}
+          onChange={setSearchQuery}
         />
       </div>
 

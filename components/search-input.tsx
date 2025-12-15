@@ -90,12 +90,16 @@ export default function SearchInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setSearchQuery(value);
+  }, [value]);
+
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isTyping) {
       setIsTyping(true);
     }
-    // onChange(e.target.value)
     setSearchQuery(e.target.value);
+    onChange(e.target.value);
     try {
       await searchLexemes({
         ismatch: 0,
@@ -115,7 +119,8 @@ export default function SearchInput({
     if (disabled) {
       toast({
         title: "Languages required",
-        description: "You must select source and target language first.",
+        description:
+          "Select a source language and destination language 1 before searching.",
         variant: "destructive",
       });
       inputRef.current?.blur();
@@ -171,6 +176,7 @@ export default function SearchInput({
   };
 
   const clearInput = () => {
+    setSearchQuery("");
     onChange("");
     setShowSuggestions(false);
     inputRef.current?.focus();

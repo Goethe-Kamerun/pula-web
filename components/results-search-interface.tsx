@@ -27,8 +27,13 @@ export default function ResultsSearchInterface({ initialQuery = "", onSearch }: 
     setSelectedTargetLanguage2
   } = useApiWithStore()
 
-  // const areLanguagesSelected = selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)
-  const areLanguagesSelected = true
+  const isSourceSelected = Boolean(selectedSourceLanguage)
+  // Allow already-hydrated values to keep fields enabled on return visits
+  const isTargetLanguage1Enabled =
+    isSourceSelected || Boolean(selectedTargetLanguage1)
+  const isTargetLanguage2Enabled =
+    Boolean(selectedTargetLanguage1) || Boolean(selectedTargetLanguage2)
+  const areLanguagesSelected = isSourceSelected && Boolean(selectedTargetLanguage1)
 
   // Load languages when component mounts
   useEffect(() => {
@@ -41,10 +46,19 @@ export default function ResultsSearchInterface({ initialQuery = "", onSearch }: 
   }, [initialQuery])
 
   const handleSearch = (query: string) => {
-    if (!areLanguagesSelected) {
+    if (!selectedSourceLanguage) {
       toast({
-        title: "Languages required",
-        description: "You must select a source language and at least one target language first.",
+        title: "Select a source language",
+        description: "Choose a source language to continue.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!selectedTargetLanguage1) {
+      toast({
+        title: "Select a destination language",
+        description: "Pick destination language 1 before searching. Destination 2 is optional.",
         variant: "destructive",
       })
       return
@@ -71,6 +85,7 @@ export default function ResultsSearchInterface({ initialQuery = "", onSearch }: 
           />
           <LanguageSelect 
             value={selectedTargetLanguage1?.lang_code || ""} 
+            disabled={!isTargetLanguage1Enabled}
             onChange={(langCode) => {
               const language = languages.find(lang => lang.lang_code === langCode);
               setSelectedTargetLanguage1(language || null);
@@ -80,6 +95,7 @@ export default function ResultsSearchInterface({ initialQuery = "", onSearch }: 
           />
           <LanguageSelect 
             value={selectedTargetLanguage2?.lang_code || ""} 
+            disabled={!isTargetLanguage2Enabled}
             onChange={(langCode) => {
               const language = languages.find(lang => lang.lang_code === langCode);
               setSelectedTargetLanguage2(language || null);
