@@ -11,6 +11,7 @@ interface LanguageSelectProps {
   placeholder?: string;
   label?: string;
   span?: string;
+  disabled?: boolean;
 }
 
 export default function LanguageSelect({
@@ -19,6 +20,7 @@ export default function LanguageSelect({
   placeholder = "Select language",
   label,
   span,
+  disabled = false,
 }: LanguageSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,13 +97,23 @@ export default function LanguageSelect({
       <div className="relative" ref={selectRef}>
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full bg-white rounded px-3 py-2 text-left text-sm focus:outline-none transition-colors"
-          style={{
-            border: `1px solid #a2a9b1`,
-            color: value ? "#222222" : "#72777d",
+          onClick={() => {
+            if (disabled) return;
+            setIsOpen(!isOpen);
           }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "#0645ad")}
+          disabled={disabled}
+          className={`w-full bg-white rounded px-3 py-2 text-left text-sm focus:outline-none transition-colors ${
+            disabled ? "cursor-not-allowed opacity-60" : ""
+          }`}
+          style={{
+            border: `1px solid ${disabled ? "#d1d5db" : "#a2a9b1"}`,
+            color: disabled ? "#9ca3af" : value ? "#222222" : "#72777d",
+            backgroundColor: disabled ? "#f3f4f6" : "#ffffff",
+          }}
+          onFocus={(e) => {
+            if (disabled) return;
+            e.currentTarget.style.borderColor = "#0645ad";
+          }}
           onBlur={(e) => (e.currentTarget.style.borderColor = "#a2a9b1")}
         >
           <span className="block truncate">{getDisplayValue()}</span>

@@ -66,10 +66,14 @@ export default function ResultsPage({
   >([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
+  const isSourceSelected = Boolean(selectedSourceLanguage);
+  // Allow already-hydrated values to keep fields enabled on return visits
+  const isTargetLanguage1Enabled =
+    isSourceSelected || Boolean(selectedTargetLanguage1);
+  const isTargetLanguage2Enabled =
+    Boolean(selectedTargetLanguage1) || Boolean(selectedTargetLanguage2);
   const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+    isSourceSelected && Boolean(selectedTargetLanguage1);
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [open, setOpen] = useState(false);
   const [contributingLanguage, setContributingLanguage] =
@@ -79,6 +83,14 @@ export default function ResultsPage({
   >(null);
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
+  const handleSearch = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    router.push(`/results/${encodeURIComponent(trimmed)}`);
+  };
+  useEffect(() => {
+    setSearchQuery(query || "");
+  }, [query]);
 
   useEffect(() => {
     hydrate();
@@ -86,7 +98,7 @@ export default function ResultsPage({
 
   useEffect(() => {
     getLanguages();
-  }, []);
+  }, [getLanguages]);
 
   useEffect(() => {
     if (clickedLexeme && clickedLexeme.id) {
@@ -214,6 +226,7 @@ export default function ResultsPage({
                 />
                 <LanguageSelect
                   value={selectedTargetLanguage1?.lang_code || ""}
+                disabled={!isTargetLanguage1Enabled}
                   onChange={(langCode) => {
                     const language = languages.find(
                       (lang) => lang.lang_code === langCode
@@ -226,6 +239,7 @@ export default function ResultsPage({
                 />
                 <LanguageSelect
                   value={selectedTargetLanguage2?.lang_code || ""}
+                disabled={!isTargetLanguage2Enabled}
                   onChange={(langCode) => {
                     const language = languages.find(
                       (lang) => lang.lang_code === langCode
@@ -241,7 +255,7 @@ export default function ResultsPage({
 
             <SearchInput
               disabled={!areLanguagesSelected}
-              onSearch={(v) => null}
+              onSearch={handleSearch}
               value={searchQuery}
               onChange={setSearchQuery}
             />
