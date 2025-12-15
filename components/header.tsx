@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useApiWithStore } from "@/hooks/useApiWithStore"
 import { useAuthStore } from "@/lib/stores/authStore"
 import type { AuthState } from '@/lib/stores/authStore';
+import Logo from "./logo"
 
 
 export default function Header() {
@@ -54,9 +55,10 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <div className="text-sm font-medium cursor-pointer" style={{ color: "#222222" }}>
-                <a href="/">
+                {/* <a href="/">
                   <img src="/logo.jpg" alt="Logo" className="h-10" />
-                </a>
+                </a> */}
+                <Logo/>
               </div>
             </div>
             <div className="hidden sm:block h-6 w-px" style={{ backgroundColor: "#a2a9b1" }} />
