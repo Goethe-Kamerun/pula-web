@@ -333,11 +333,18 @@ export default function ResultsPage({
                   </div>
                 )}
                 <Tabs defaultValue="target1" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="target1">
+                  <TabsList className="grid w-full grid-cols-2 bg-transparent border-gray-300">
+                    <TabsTrigger
+                      value="target1"
+                      className="rounded-none text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-gray-900 data-[state=active]:bg-transparent transition-colors hover:text-gray-800 hover:bg-gray-100"
+                    >
                       {selectedTargetLanguage1?.lang_label || "Target 1"}
                     </TabsTrigger>
-                    <TabsTrigger value="target2">
+                    <TabsTrigger
+                      value="target2"
+                      className="rounded-none text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-gray-900 data-[state=active]:bg-transparent transition-colors hover:text-gray-800 hover:bg-gray-100
+  "
+                    >
                       {selectedTargetLanguage2?.lang_label || "Target 2"}
                     </TabsTrigger>
                   </TabsList>
