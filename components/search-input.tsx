@@ -39,6 +39,7 @@ export default function SearchInput({
     lexemes,
     lexemeLoading,
     setClickedLexeme,
+    setLexemes,
   } = useApiWithStore();
 
   // Debounced search function
@@ -172,6 +173,7 @@ export default function SearchInput({
 
   const clearInput = () => {
     onChange("");
+    setLexemes([]);
     setShowSuggestions(false);
     inputRef.current?.focus();
   };

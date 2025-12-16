@@ -465,6 +465,7 @@ export const useApiWithStore = () => {
     getLexemeTranslations,
     getLexemeMissingAudio,
     setQuery,
+    setLexemes,
     setClickedLexeme,
 
     // Auth actions
