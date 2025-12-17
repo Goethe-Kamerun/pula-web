@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from "react";
@@ -6,6 +7,7 @@ import { Search, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { LexemeSearchResult } from "@/lib/types/api";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface SearchInputProps {
   disabled?: boolean;
@@ -172,11 +174,14 @@ export default function SearchInput({
   };
 
   const clearInput = () => {
+    setSearchQuery('');  // Resets the input value
     onChange("");
     setLexemes([]);
     setShowSuggestions(false);
     inputRef.current?.focus();
   };
+
+
 
   return (
     <div className="relative">
@@ -208,7 +213,7 @@ export default function SearchInput({
           }
           onBlur={(e) => (e.currentTarget.style.borderColor = "#a2a9b1")}
         />
-        {value && !disabled && (
+        {searchQuery && !disabled && (
           <button
             type="button"
             onClick={clearInput}
@@ -218,9 +223,13 @@ export default function SearchInput({
             <X className="h-5 w-5" />
           </button>
         )}
+        {/* Add tooltip for search functionality */}
+        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2">
+          <Tooltip description="Search for words or terms. Select source and target languages first. Use arrow keys to navigate suggestions, Enter to select." />
+        </div>
       </div>
 
-      {isTyping && !disabled && showSuggestions && lexemes.length > 0 && (
+      {isTyping && !disabled && showSuggestions && (
         <div
           ref={suggestionsRef}
           className="absolute z-20 w-full mt-1 bg-white rounded-lg shadow-lg max-h-60 overflow-auto"
@@ -231,35 +240,43 @@ export default function SearchInput({
               Searching...
             </div>
           )}
-          {!lexemeLoading &&
-            lexemes.map((lexeme, index) => (
-              <button
-                key={lexeme.id}
-                type="button"
-                onClick={() => handleSuggestionSelect(lexeme)}
-                className="w-full text-left px-4 py-3 text-sm focus:outline-none flex items-center space-x-3 transition-colors"
-                style={{
-                  backgroundColor:
-                    index === selectedIndex ? "#f8f9fa" : "transparent",
-                  color: "#222222",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#f8f9fa")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    index === selectedIndex ? "#f8f9fa" : "transparent")
-                }
-              >
-                <Search className="h-4 w-4" style={{ color: "#72777d" }} />
-                <div className="flex-1">
-                  <div className="font-medium">{lexeme.label}</div>
-                  <div className="text-xs" style={{ color: "#72777d" }}>
-                    {lexeme.description}
+          {!lexemeLoading && lexemes.length > 0 && (
+            <>
+              {lexemes.map((lexeme, index) => (
+                <button
+                  key={lexeme.id}
+                  type="button"
+                  onClick={() => handleSuggestionSelect(lexeme)}
+                  className="w-full text-left px-4 py-3 text-sm focus:outline-none flex items-center space-x-3 transition-colors"
+                  style={{
+                    backgroundColor:
+                      index === selectedIndex ? "#f8f9fa" : "transparent",
+                    color: "#222222",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      index === selectedIndex ? "#f8f9fa" : "transparent")
+                  }
+                >
+                  <Search className="h-4 w-4" style={{ color: "#72777d" }} />
+                  <div className="flex-1">
+                    <div className="font-medium">{lexeme.label}</div>
+                    <div className="text-xs" style={{ color: "#72777d" }}>
+                      {lexeme.description}
+                    </div>
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </>
+          )}
+          {!lexemeLoading && lexemes.length === 0 && (
+            <div className="px-4 py-3 text-sm font-semibold" style={{ color: "#000000" }}>
+              No data found
+            </div>
+          )}
         </div>
       )}
     </div>
