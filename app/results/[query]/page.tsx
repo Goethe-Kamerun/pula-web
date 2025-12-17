@@ -114,7 +114,12 @@ export default function ResultsPage({
         }, 300); // 300ms debounce delay
       };
     })(),
-    [getLexemeDetails, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+    [
+      getLexemeDetails,
+      selectedSourceLanguage,
+      selectedTargetLanguage1,
+      selectedTargetLanguage2,
+    ]
   );
 
   const debouncedGetLexemeTranslations = useCallback(
@@ -132,16 +137,30 @@ export default function ResultsPage({
         }, 300); // 300ms debounce delay
       };
     })(),
-    [getLexemeTranslations, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+    [
+      getLexemeTranslations,
+      selectedSourceLanguage,
+      selectedTargetLanguage1,
+      selectedTargetLanguage2,
+    ]
   );
 
   // Auto-trigger API calls when language selections change
   useEffect(() => {
-    if (selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)) {
+    if (
+      selectedSourceLanguage &&
+      (selectedTargetLanguage1 || selectedTargetLanguage2)
+    ) {
       debouncedGetLexemeDetails();
       debouncedGetLexemeTranslations();
     }
-  }, [selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2, debouncedGetLexemeDetails, debouncedGetLexemeTranslations]);
+  }, [
+    selectedSourceLanguage,
+    selectedTargetLanguage1,
+    selectedTargetLanguage2,
+    debouncedGetLexemeDetails,
+    debouncedGetLexemeTranslations,
+  ]);
 
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
@@ -382,14 +401,13 @@ export default function ResultsPage({
                   <TabsList className="grid w-full grid-cols-2 bg-transparent border-gray-300">
                     <TabsTrigger
                       value="target1"
-                      className="rounded-none text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-gray-900 data-[state=active]:bg-transparent transition-colors hover:text-gray-800 hover:bg-gray-100"
+                      className=" data-[state=active]:border data-[state=active]:border-[#a2a9b1] data-[state=active]:shadow-gray-500/40 "
                     >
                       {selectedTargetLanguage1?.lang_label || "Target 1"}
                     </TabsTrigger>
                     <TabsTrigger
                       value="target2"
-                      className="rounded-none text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-gray-900 data-[state=active]:bg-transparent transition-colors hover:text-gray-800 hover:bg-gray-100
-  "
+                      className=" data-[state=active]:border data-[state=active]:border-[#a2a9b1] data-[state=active]:shadow-gray-500/40 "
                     >
                       {selectedTargetLanguage2?.lang_label || "Target 2"}
                     </TabsTrigger>
