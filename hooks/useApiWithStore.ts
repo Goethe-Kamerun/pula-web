@@ -75,6 +75,23 @@ export const useApiWithStore = () => {
     (state: LexemeState) => state.setLexemeTranslations
   );
 
+  const selectedSourceLanguage = useLanguageStore(
+    (state: LanguageState) => state.selectedSourceLanguage
+  );
+
+  const selectedTargetLanguage1 = useLanguageStore(
+    (state: LanguageState) => state.selectedTargetLanguage1
+  );
+
+  const selectedTargetLanguage2 = useLanguageStore(
+    (state: LanguageState) => state.selectedTargetLanguage2
+  );
+
+  /**
+   * Centralised search readiness
+   */
+  const isSearchReady = !!selectedSourceLanguage && !!selectedTargetLanguage1;
+
   /**
    * Get the list of languages from the API and store it in the store and local storage
    */
@@ -162,20 +179,17 @@ export const useApiWithStore = () => {
     const selectedTargetLanguage2 =
       useLanguageStore.getState().selectedTargetLanguage2;
 
-    if (
-      !clickedLexeme ||
-      !selectedSourceLanguage ||
-      !selectedTargetLanguage1 ||
-      !selectedTargetLanguage2
-    ) {
+    if (!clickedLexeme || !selectedSourceLanguage || !selectedTargetLanguage1) {
       return;
     }
 
     let request: LexemeDetailRequest = {
-      id: clickedLexeme?.id || "",
-      src_lang: selectedSourceLanguage?.lang_code || "",
-      lang_1: selectedTargetLanguage1?.lang_code || "",
-      lang_2: selectedTargetLanguage2?.lang_code || "",
+      id: clickedLexeme.id,
+      src_lang: selectedSourceLanguage.lang_code,
+      lang_1: selectedTargetLanguage1.lang_code,
+      ...(selectedTargetLanguage2 && {
+        lang_2: selectedTargetLanguage2.lang_code,
+      }),
     };
 
     // Construct request parameters
@@ -224,20 +238,17 @@ export const useApiWithStore = () => {
     const selectedTargetLanguage2 =
       useLanguageStore.getState().selectedTargetLanguage2;
 
-    if (
-      !clickedLexeme ||
-      !selectedSourceLanguage ||
-      !selectedTargetLanguage1 ||
-      !selectedTargetLanguage2
-    ) {
+    if (!clickedLexeme || !selectedSourceLanguage || !selectedTargetLanguage1) {
       return;
     }
 
     let request: LexemeDetailRequest = {
-      id: clickedLexeme?.id || "",
-      src_lang: selectedSourceLanguage?.lang_code || "",
-      lang_1: selectedTargetLanguage1?.lang_code || "",
-      lang_2: selectedTargetLanguage2?.lang_code || "",
+      id: clickedLexeme.id,
+      src_lang: selectedSourceLanguage.lang_code,
+      lang_1: selectedTargetLanguage1.lang_code,
+      ...(selectedTargetLanguage2 && {
+        lang_2: selectedTargetLanguage2.lang_code,
+      }),
     };
 
     try {
@@ -500,5 +511,6 @@ export const useApiWithStore = () => {
     // Reset functions
     resetLanguageStore: useLanguageStore((state: LanguageState) => state.reset),
     resetLexemeStore: useLexemeStore((state: LexemeState) => state.reset),
+    isSearchReady,
   };
 };

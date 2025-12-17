@@ -29,11 +29,12 @@
     }
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "webpack.config.js"
+    "next-env.d.ts",
+    "webpack.config.js",
+    "./.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
