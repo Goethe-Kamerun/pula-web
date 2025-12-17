@@ -1,9 +1,11 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check, Search } from "lucide-react";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface LanguageSelectProps {
   value: string;
@@ -70,6 +72,7 @@ export default function LanguageSelect({
 
   return (
     <div>
+
       <div className=" flex items-center">
         {label && (
           <>
@@ -89,6 +92,13 @@ export default function LanguageSelect({
               </span>
             )}
             <Spinner loading={loading} />
+            {/* Add helpful tooltips for each language type */}
+            {label === "Source Language" && (
+              <Tooltip description="The language you want to translate from. Select the language of the word or term you're searching for." />
+            )}
+            {label?.includes("Target Language") && (
+              <Tooltip description="The language you want to translate to. Select one or more languages to see translations and contributions." />
+            )}
           </>
         )}
       </div>

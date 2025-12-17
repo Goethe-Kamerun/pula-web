@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback, use, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, use, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -54,6 +54,7 @@ export default function ResultsPage({
     setSelectedTargetLanguage2,
     query,
     lexemeTranslations,
+    isSearchReady,
   } = useApiWithStore();
 
 
@@ -68,36 +69,8 @@ export default function ResultsPage({
   >([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
-  
-
-  // Cache for filtered results to prevent unnecessary API calls
-  const [dataCache, setDataCache] = useState<{
-    sourceLang: GlossWithSense[];
-    target1Lang: GlossWithSense[];
-    target2Lang: GlossWithSense[];
-    cacheKey: string;
-  } | null>(null);
-  
-  // Generate cache key based on lexeme ID and language selections
-  const cacheKey = useMemo(() => {
-    if (!selectedLexeme?.lexeme?.id || !selectedSourceLanguage || !selectedTargetLanguage1 || !selectedTargetLanguage2) {
-      return "";
-    }
-    return `${selectedLexeme.lexeme.id}_${selectedSourceLanguage.lang_code}_${selectedTargetLanguage1.lang_code}_${selectedTargetLanguage2.lang_code}`;
-  }, [selectedLexeme?.lexeme?.id, selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code]);
-
-
-  // Check if we have cached data for current selection
-  const hasValidCache = useMemo(() => {
-    return dataCache?.cacheKey === cacheKey && cacheKey !== "";
-  }, [dataCache, cacheKey]);
-  
-  const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
-
-
+  // const areLanguagesSelected =
+  //   selectedSourceLanguage && selectedTargetLanguage1;
   const [searchQuery, setSearchQuery] = useState(query || "");
   const [open, setOpen] = useState(false);
   const [contributingLanguage, setContributingLanguage] =
@@ -106,15 +79,9 @@ export default function ResultsPage({
     "description" | "audio" | "translation" | null
   >(null);
 
-  // Clear cache when language selections change (but not when just switching tabs)
-  useEffect(() => {
-    if (selectedSourceLanguage && selectedTargetLanguage1 && selectedTargetLanguage2) {
-      // If languages have changed, clear the cache to force new API call
-      setDataCache(null);
-    }
-  }, [selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code]);
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
+  const prevTarget2Ref = useRef<typeof selectedTargetLanguage2 | null>(null);
 
   useEffect(() => {
     hydrate();
@@ -133,6 +100,50 @@ export default function ResultsPage({
     }
   }, [clickedLexeme]);
 
+  // Debounced API call functions to prevent excessive calls on rapid language changes
+  const debouncedGetLexemeDetails = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (
+            selectedSourceLanguage &&
+            (selectedTargetLanguage1 || selectedTargetLanguage2)
+          ) {
+            getLexemeDetails();
+          }
+        }, 300); // 300ms debounce delay
+      };
+    })(),
+    [getLexemeDetails, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+  );
+
+  const debouncedGetLexemeTranslations = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (
+            selectedSourceLanguage &&
+            (selectedTargetLanguage1 || selectedTargetLanguage2)
+          ) {
+            getLexemeTranslations();
+          }
+        }, 300); // 300ms debounce delay
+      };
+    })(),
+    [getLexemeTranslations, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+  );
+
+  // Auto-trigger API calls when language selections change
+  useEffect(() => {
+    if (selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)) {
+      debouncedGetLexemeDetails();
+      debouncedGetLexemeTranslations();
+    }
+  }, [selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2, debouncedGetLexemeDetails, debouncedGetLexemeTranslations]);
 
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
@@ -179,14 +190,11 @@ export default function ResultsPage({
 
 
   const handleGetLexemeDetails = useCallback(async () => {
-    if (
-      !selectedSourceLanguage ||
-      (!selectedTargetLanguage1 && !selectedTargetLanguage2)
-    ) {
+    if (!selectedSourceLanguage || !selectedTargetLanguage1) {
       toast({
         title: "Languages required",
         description:
-          "Please select source and target languages to get details.",
+          "Please select a source language and at least one target language to get details.",
         variant: "destructive",
       });
       return;
@@ -215,6 +223,25 @@ export default function ResultsPage({
     getLexemeTranslations,
     hasValidCache,
     dataCache,
+  ]);
+
+  useEffect(() => {
+    if (
+      !prevTarget2Ref.current &&
+      selectedTargetLanguage2 &&
+      clickedLexeme?.id &&
+      selectedSourceLanguage &&
+      selectedTargetLanguage1
+    ) {
+      handleGetLexemeDetails();
+    }
+    prevTarget2Ref.current = selectedTargetLanguage2 || null;
+  }, [
+    selectedTargetLanguage2,
+    clickedLexeme,
+    selectedSourceLanguage,
+    selectedTargetLanguage1,
+    handleGetLexemeDetails,
   ]);
 
   const handleContribute = (
@@ -300,14 +327,13 @@ export default function ResultsPage({
                     setSelectedTargetLanguage2(language || null);
                   }}
                   placeholder="Select target language 2"
-                  label="Target Language 2"
-                  span="*"
+                  label="Target Language 2 (optional)"
                 />
               </div>
             </div>
 
             <SearchInput
-              disabled={!areLanguagesSelected}
+              disabled={!isSearchReady}
               onSearch={(v) => null}
               value={searchQuery}
               onChange={setSearchQuery}
@@ -344,11 +370,11 @@ export default function ResultsPage({
                   glossesWithSense={sourceLexemeDetails}
                   lexemeDetail={singleLexemeObj}
                   translation={null}
-                    // lexemeTranslations &&
-                    // lexemeTranslations.find(
-                    //   (t: LexemeTranslation) =>
-                    //     t.trans_language === selectedSourceLanguage?.lang_code
-                    // )
+                  // lexemeTranslations &&
+                  // lexemeTranslations.find(
+                  //   (t: LexemeTranslation) =>
+                  //     t.trans_language === selectedSourceLanguage?.lang_code
+                  // )
                   // }
                   title={
                     selectedSourceLanguage?.lang_label || "Source Language"
@@ -363,7 +389,7 @@ export default function ResultsPage({
             {/* Column 2: Target Languages Results */}
             <div className="lg:col-span-3">
               <h3
-                className="text-lg font-medium mb-4"
+                className="text-lg font-medium mb-2"
                 style={{ color: "#222222" }}
               >
                 Target Languages
