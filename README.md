@@ -1,10 +1,10 @@
-# AGPB v4 Web Application
+# PULA v4 Web Application
 
 A modern web application for searching lexemes (words) and contributing audio recordings for language learning. Built with Next.js, TypeScript, and Zustand for state management.
 
 ## �� What it does
 
-AGPB (Audio Guide for Pronunciation and Bilingual) is a collaborative platform that helps users:
+PULA (People's Universal Lexical Access) is a collaborative platform that helps users:
 
 - **Search for lexemes** across multiple languages with detailed translations and glosses
 - **Contribute audio recordings** for words that don't have pronunciation audio
@@ -34,7 +34,7 @@ AGPB (Audio Guide for Pronunciation and Bilingual) is a collaborative platform t
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd agpb-v4-web
+   cd pula-v4-web
    ```
 
 2. **Install dependencies**
@@ -68,7 +68,7 @@ AGPB (Audio Guide for Pronunciation and Bilingual) is a collaborative platform t
 ### Project Structure
 
 ```
-agpb-v4-web/
+pula-v4-web/
 ├── app/                    # Next.js App Router pages
 │   ├── auth/              # Authentication pages
 │   ├── contribute/        # Contribution workflow
@@ -193,7 +193,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Built with support from Wikimedia Deutschland
 - Uses Wikimedia Codex design system
 - Integrates with Wikimedia OAuth for authentication
-- Powered by the AGPB backend API
+- Powered by the PULA backend API
 
 ## 📞 Support
 
@@ -205,7 +205,7 @@ For questions or support:
 
 ---
 
-**AGPB v4 Web** - Making language learning accessible through collaborative audio contributions.
+**PULA v4 Web** - Making language learning accessible through collaborative audio contributions.
 ```
 
-This README provides a comprehensive overview of the AGPB v4 web application, including what it does, how to set it up, how to run it, and how to contribute. It covers all the essential information a developer would need to understand and work with the project.
+This README provides a comprehensive overview of the PULA v4 web application, including what it does, how to set it up, how to run it, and how to contribute. It covers all the essential information a developer would need to understand and work with the project.

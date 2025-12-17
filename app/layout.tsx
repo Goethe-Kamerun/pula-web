@@ -2,17 +2,18 @@ import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { TooltipProvider } from "@/components/tooltip-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AGPB - African German Phrase Book",
+  title: "PULA - People's Universal Lexical Access",
   description: "Easy translation from any base language to any target language",
-  authors: [{ name: "AGPB", url: "https://github.com/agpb" }],
+  authors: [{ name: "PULA", url: "https://github.com/agpb" }],
   keywords: ["translation", "language", "phrase book", "German", "African"],
   robots: "index, follow",
   openGraph: {
-    title: "AGPB - African German Phrase Book",
+    title: "PULA - People's Universal Lexical Access",
     description: "Easy translation from any base language to any target language",
   }
 }
@@ -24,7 +25,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <TooltipProvider>{children}</TooltipProvider>
+      </body>
     </html>
   )
 }

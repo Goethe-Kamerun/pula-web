@@ -8,6 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip-info";
 import {
   AddTranslationRequest,
   Language,
@@ -102,7 +103,10 @@ export default function ContributeTranslationModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Translation Contribution</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            Translation Contribution
+            <Tooltip description="Add a translation to help improve our translations for this language." />
+          </DialogTitle>
           <DialogDescription>
             Add a translation to help improve our translations for{" "}
             {language ? language.lang_label : "the language"}.
