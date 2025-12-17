@@ -25,12 +25,11 @@ export default function SearchInterface() {
     setSelectedTargetLanguage1,
     setSelectedTargetLanguage2,
     clickedLexeme,
+    isSearchReady,
   } = useApiWithStore();
 
-  const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+  // const areLanguagesSelected =
+  //   selectedSourceLanguage && selectedTargetLanguage1;
   // const areLanguagesSelected = true;
 
   // Load languages when component mounts
@@ -45,7 +44,7 @@ export default function SearchInterface() {
   }, [clickedLexeme]);
 
   const handleSearch = (query: string) => {
-    if (!areLanguagesSelected) {
+    if (!isSearchReady) {
       toast({
         title: "Languages required",
         description:
@@ -104,8 +103,7 @@ export default function SearchInterface() {
               setSelectedTargetLanguage2(language || null);
             }}
             placeholder="Select target language 2"
-            label="Target Language 2"
-            span="*"
+            label="Target Language 2 (optional)"
           />
         </div>
       </div>
@@ -113,7 +111,7 @@ export default function SearchInterface() {
       {/* Search Input */}
       <div className="mb-8">
         <SearchInput
-          disabled={!areLanguagesSelected}
+          disabled={!isSearchReady}
           onSearch={handleSearch}
           value={""}
           onChange={(v) => null}
@@ -122,7 +120,7 @@ export default function SearchInterface() {
 
 
       {/* Instructions */}
-      {!areLanguagesSelected && (
+      {!isSearchReady && (
         <div
           className="border rounded p-4 text-center"
           style={{
