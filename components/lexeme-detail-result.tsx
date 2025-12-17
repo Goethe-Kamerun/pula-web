@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
-import type { AuthState } from "@/lib/stores/authStore";
+
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useEffect, useState } from "react";
 
@@ -29,9 +29,8 @@ export default function LexemeDetailResultComponent({
 }: LexemeDetailResultProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { login, logout } = useApiWithStore();
-  const token = useAuthStore((state: AuthState) => state.token);
-  const hydrate = useAuthStore((state: AuthState) => state.hydrate);
-
+  const token = useAuthStore((state) => state.token);
+  const hydrate = useAuthStore((state) => state.hydrate);
   useEffect(() => {
     hydrate();
   }, [hydrate]);
