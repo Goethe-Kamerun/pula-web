@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -5,20 +6,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface LanguageSelectProps {
   value: string;
@@ -48,8 +36,9 @@ export default function LanguageSelect({
   const selectedLanguage = languages.find((lang) => lang.lang_code === value);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center">
+    <div>
+
+      <div className=" flex items-center">
         {label && (
           <>
             <label
@@ -60,6 +49,13 @@ export default function LanguageSelect({
             </label>
             {span && <span className="text-sm text-red-500 ml-1">{span}</span>}
             <Spinner loading={loading} />
+            {/* Add helpful tooltips for each language type */}
+            {label === "Source Language" && (
+              <Tooltip description="The language you want to translate from. Select the language of the word or term you're searching for." />
+            )}
+            {label?.includes("Target Language") && (
+              <Tooltip description="The language you want to translate to. Select one or more languages to see translations and contributions." />
+            )}
           </>
         )}
       </div>

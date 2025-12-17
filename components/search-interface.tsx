@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +7,7 @@ import LanguageSelect from "@/components/language-select";
 import SearchInput from "@/components/search-input";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 export default function SearchInterface() {
   // const [searchQuery, setSearchQuery] = useState("")
@@ -23,12 +25,11 @@ export default function SearchInterface() {
     setSelectedTargetLanguage1,
     setSelectedTargetLanguage2,
     clickedLexeme,
+    isSearchReady,
   } = useApiWithStore();
 
-  const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+  // const areLanguagesSelected =
+  //   selectedSourceLanguage && selectedTargetLanguage1;
   // const areLanguagesSelected = true;
 
   // Load languages when component mounts
@@ -43,7 +44,7 @@ export default function SearchInterface() {
   }, [clickedLexeme]);
 
   const handleSearch = (query: string) => {
-    if (!areLanguagesSelected) {
+    if (!isSearchReady) {
       toast({
         title: "Languages required",
         description:
@@ -118,12 +119,7 @@ export default function SearchInterface() {
               setSelectedTargetLanguage2(language || null);
             }}
             placeholder="Select target language 2"
-            label="Target Language 2"
-            span="*"
-            excludedLanguages={[
-              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
-              ...(selectedTargetLanguage1 ? [selectedTargetLanguage1.lang_code] : []),
-            ]}
+            label="Target Language 2 (optional)"
           />
         </div>
       </div>
@@ -131,15 +127,16 @@ export default function SearchInterface() {
       {/* Search Input */}
       <div className="mb-8">
         <SearchInput
-          disabled={!areLanguagesSelected}
+          disabled={!isSearchReady}
           onSearch={handleSearch}
           value={""}
           onChange={(v) => null}
         />
       </div>
 
+
       {/* Instructions */}
-      {!areLanguagesSelected && (
+      {!isSearchReady && (
         <div
           className="border rounded p-4 text-center"
           style={{
@@ -147,10 +144,13 @@ export default function SearchInterface() {
             borderColor: "#a2a9b1",
           }}
         >
-          <p style={{ color: "#72777d" }}>
-            Please select a source language and at least one target language to
-            enable search
-          </p>
+          <div className="flex items-center justify-center gap-2">
+            <p style={{ color: "#72777d" }}>
+              Please select a source language and at least one target language to
+              enable search
+            </p>
+            <Tooltip description="Select your source language (what you're translating from) and one or more target languages (what you're translating to) to search for words and contribute translations." />
+          </div>
         </div>
       )}
 
