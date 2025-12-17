@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +7,7 @@ import LanguageSelect from "@/components/language-select";
 import SearchInput from "@/components/search-input";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 export default function SearchInterface() {
   // const [searchQuery, setSearchQuery] = useState("")
@@ -116,6 +118,7 @@ export default function SearchInterface() {
         />
       </div>
 
+
       {/* Instructions */}
       {!isSearchReady && (
         <div
@@ -125,10 +128,13 @@ export default function SearchInterface() {
             borderColor: "#a2a9b1",
           }}
         >
-          <p style={{ color: "#72777d" }}>
-            Please select a source language and at least one target language to
-            enable search
-          </p>
+          <div className="flex items-center justify-center gap-2">
+            <p style={{ color: "#72777d" }}>
+              Please select a source language and at least one target language to
+              enable search
+            </p>
+            <Tooltip description="Select your source language (what you're translating from) and one or more target languages (what you're translating to) to search for words and contribute translations." />
+          </div>
         </div>
       )}
 

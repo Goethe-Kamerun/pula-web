@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from "react";
@@ -6,6 +7,7 @@ import { Search, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { LexemeSearchResult } from "@/lib/types/api";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface SearchInputProps {
   disabled?: boolean;
@@ -177,6 +179,8 @@ export default function SearchInput({
     inputRef.current?.focus();
   };
 
+
+
   return (
     <div className="relative">
       <div className="relative">
@@ -217,6 +221,10 @@ export default function SearchInput({
             <X className="h-5 w-5" />
           </button>
         )}
+        {/* Add tooltip for search functionality */}
+        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2">
+          <Tooltip description="Search for words or terms. Select source and target languages first. Use arrow keys to navigate suggestions, Enter to select." />
+        </div>
       </div>
 
       {isTyping && !disabled && showSuggestions && (

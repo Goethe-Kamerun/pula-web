@@ -76,6 +76,7 @@ export default function ResultsPage({
   const [contributingType, setContributingType] = useState<
     "description" | "audio" | "translation" | null
   >(null);
+
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
   const prevTarget2Ref = useRef<typeof selectedTargetLanguage2 | null>(null);
@@ -96,6 +97,51 @@ export default function ResultsPage({
       handleGetLexemeDetails();
     }
   }, [clickedLexeme]);
+
+  // Debounced API call functions to prevent excessive calls on rapid language changes
+  const debouncedGetLexemeDetails = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (
+            selectedSourceLanguage &&
+            (selectedTargetLanguage1 || selectedTargetLanguage2)
+          ) {
+            getLexemeDetails();
+          }
+        }, 300); // 300ms debounce delay
+      };
+    })(),
+    [getLexemeDetails, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+  );
+
+  const debouncedGetLexemeTranslations = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (
+            selectedSourceLanguage &&
+            (selectedTargetLanguage1 || selectedTargetLanguage2)
+          ) {
+            getLexemeTranslations();
+          }
+        }, 300); // 300ms debounce delay
+      };
+    })(),
+    [getLexemeTranslations, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+  );
+
+  // Auto-trigger API calls when language selections change
+  useEffect(() => {
+    if (selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)) {
+      debouncedGetLexemeDetails();
+      debouncedGetLexemeTranslations();
+    }
+  }, [selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2, debouncedGetLexemeDetails, debouncedGetLexemeTranslations]);
 
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
