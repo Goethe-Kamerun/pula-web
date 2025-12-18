@@ -411,7 +411,7 @@ export default function ResultsPage({
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="target1" className="mt-4">
+                  <TabsContent value="target1" className="mt-4" forceMount={true}>
                     <LexemeDetailResultComponent
                       glossesWithSense={target1LexemeDetails}
                       translation={
@@ -429,7 +429,7 @@ export default function ResultsPage({
                     />
                   </TabsContent>
 
-                  <TabsContent value="target2" className="mt-4">
+                  <TabsContent value="target2" className="mt-4" forceMount={true}>
                     <LexemeDetailResultComponent
                       glossesWithSense={target2LexemeDetails}
                       title={selectedTargetLanguage2?.lang_label || "Target 2"}

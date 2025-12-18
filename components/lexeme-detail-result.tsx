@@ -9,9 +9,8 @@ import {
 } from "@/lib/types/api";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { useAuthStore } from "@/lib/stores/authStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface LexemeDetailResultProps {
@@ -30,21 +29,8 @@ export default function LexemeDetailResultComponent({
   onContribute,
 }: LexemeDetailResultProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { login, logout } = useApiWithStore();
 
   const token = useAuthStore((state) => state.token);
-  const hydrate = useAuthStore((state) => state.hydrate);
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
-
-  useEffect(() => {
-    // Re-hydrate when token changes
-    if (token) {
-      hydrate();
-    }
-  }, [token, hydrate]);
 
   return (
     <div className="space-y-4">
