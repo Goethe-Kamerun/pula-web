@@ -48,7 +48,7 @@ export const ZustandExample = () => {
       ismatch: 0,
       search: query,
       src_lang: selectedSourceLanguage.lang_code,
-      with_sense: true,
+      with_sense: false,
     });
   };
 
