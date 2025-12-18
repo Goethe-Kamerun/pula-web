@@ -106,9 +106,10 @@ export default function SearchInterface() {
             placeholder="Select target language 1"
             label="Target Language 1"
             span="*"
-            excludedLanguages={
-              selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []
-            }
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage2 ? [selectedTargetLanguage2.lang_code] : []),
+            ]}
           />
           <LanguageSelect
             value={selectedTargetLanguage2?.lang_code || ""}
@@ -120,6 +121,10 @@ export default function SearchInterface() {
             }}
             placeholder="Select target language 2"
             label="Target Language 2 (optional)"
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage1 ? [selectedTargetLanguage1.lang_code] : []),
+            ]}
           />
         </div>
       </div>
