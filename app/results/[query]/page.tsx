@@ -114,7 +114,12 @@ export default function ResultsPage({
         }, 300); // 300ms debounce delay
       };
     })(),
-    [getLexemeDetails, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+    [
+      getLexemeDetails,
+      selectedSourceLanguage,
+      selectedTargetLanguage1,
+      selectedTargetLanguage2,
+    ]
   );
 
   const debouncedGetLexemeTranslations = useCallback(
@@ -132,16 +137,30 @@ export default function ResultsPage({
         }, 300); // 300ms debounce delay
       };
     })(),
-    [getLexemeTranslations, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
+    [
+      getLexemeTranslations,
+      selectedSourceLanguage,
+      selectedTargetLanguage1,
+      selectedTargetLanguage2,
+    ]
   );
 
   // Auto-trigger API calls when language selections change
   useEffect(() => {
-    if (selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)) {
+    if (
+      selectedSourceLanguage &&
+      (selectedTargetLanguage1 || selectedTargetLanguage2)
+    ) {
       debouncedGetLexemeDetails();
       debouncedGetLexemeTranslations();
     }
-  }, [selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2, debouncedGetLexemeDetails, debouncedGetLexemeTranslations]);
+  }, [
+    selectedSourceLanguage,
+    selectedTargetLanguage1,
+    selectedTargetLanguage2,
+    debouncedGetLexemeDetails,
+    debouncedGetLexemeTranslations,
+  ]);
 
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
@@ -270,6 +289,14 @@ export default function ResultsPage({
                       (lang) => lang.lang_code === langCode
                     );
                     setSelectedSourceLanguage(language || null);
+
+                    // Clear targets if they match the new source
+                    if (selectedTargetLanguage1?.lang_code === langCode) {
+                      setSelectedTargetLanguage1(null);
+                    }
+                    if (selectedTargetLanguage2?.lang_code === langCode) {
+                      setSelectedTargetLanguage2(null);
+                    }
                   }}
                   placeholder="Select source language"
                   label="Source Language"
@@ -281,10 +308,20 @@ export default function ResultsPage({
                       (lang) => lang.lang_code === langCode
                     );
                     setSelectedTargetLanguage1(language || null);
+
+                    // Clear target 2 if it matches the new target 1
+                    if (selectedTargetLanguage2?.lang_code === langCode) {
+                      setSelectedTargetLanguage2(null);
+                    }
                   }}
                   placeholder="Select target language 1"
                   label="Target Language 1"
                   span="*"
+                  excludedLanguages={
+                    selectedSourceLanguage
+                      ? [selectedSourceLanguage.lang_code]
+                      : []
+                  }
                 />
                 <LanguageSelect
                   value={selectedTargetLanguage2?.lang_code || ""}
@@ -379,11 +416,17 @@ export default function ResultsPage({
                   </div>
                 )}
                 <Tabs defaultValue="target1" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="target1">
+                  <TabsList className="grid w-full grid-cols-2 bg-transparent border-gray-300">
+                    <TabsTrigger
+                      value="target1"
+                      className=" data-[state=active]:border data-[state=active]:border-[#a2a9b1] data-[state=active]:shadow-gray-500/40 "
+                    >
                       {selectedTargetLanguage1?.lang_label || "Target 1"}
                     </TabsTrigger>
-                    <TabsTrigger value="target2">
+                    <TabsTrigger
+                      value="target2"
+                      className=" data-[state=active]:border data-[state=active]:border-[#a2a9b1] data-[state=active]:shadow-gray-500/40 "
+                    >
                       {selectedTargetLanguage2?.lang_label || "Target 2"}
                     </TabsTrigger>
                   </TabsList>
