@@ -24,13 +24,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <OnboardingWrapper>
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </OnboardingWrapper>
-        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   )
