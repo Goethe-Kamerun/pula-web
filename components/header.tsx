@@ -5,10 +5,12 @@ import { Menu, User, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { useAuthStore } from "@/lib/stores/authStore";
+import LoginPromptModal from "@/components/login-prompt-modal";
 import type { AuthState } from "@/lib/stores/authStore";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { login, logout } = useApiWithStore();
   const token = useAuthStore((state: AuthState) => state.token);
   const username = useAuthStore((state: AuthState) => state.username);
@@ -47,13 +49,11 @@ export default function Header() {
 
   const handleRecordingStudioClick = () => {
     if (!token) {
-      // User is not logged in, show login modal
       setIsLoginModalOpen(true);
     } else {
-      // User is logged in, navigate to Recording Studio
       window.location.href = "/contribute";
     }
-  }
+  };
 
   return (
     <header className="border-b bg-white" style={{ borderColor: "#a2a9b1" }}>
@@ -116,15 +116,15 @@ export default function Header() {
             >
               FAQ
             </a>
-            <a
-              href="/contribute"
+            <button
+              onClick={handleRecordingStudioClick}
               className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
               style={{ color: "#0645ad" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#0b0080")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#0645ad")}
             >
               <Mic size="1em" className="max-sm:hidden" /> Record Studio
-            </a>
+            </button>
             {username ? (
               <div className="flex items-center space-x-2">
                 <User className="w-5 h-5" style={{ color: "#72777d" }} />
@@ -186,7 +186,7 @@ export default function Header() {
                 style={{ color: "#0645ad" }}
               >
                 Contribute
-              </a>
+              </button>
               <a
                 className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
                 href="/faq"
@@ -200,8 +200,7 @@ export default function Header() {
           </div>
         )}
       </div>
-      
-      {/* Login Prompt Modal */}
+
       <LoginPromptModal
         open={isLoginModalOpen}
         onOpenChange={setIsLoginModalOpen}
