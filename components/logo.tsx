@@ -22,7 +22,6 @@ export default function Logo () {
   return (
     <button
       onClick={handleLogoClick}
-
       aria-label="Go to homepage"
       className="cursor-pointer"
     >
