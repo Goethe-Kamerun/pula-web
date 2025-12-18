@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState, useEffect, useCallback, use, useRef } from "react";
+
+import { useState, useEffect, useCallback, use, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -58,15 +59,7 @@ export default function ResultsPage({
   } = useApiWithStore();
 
 
-  const [sourceLexemeDetails, setSourceLexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
-  const [target1LexemeDetails, setTarget1LexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
-  const [target2LexemeDetails, setTarget2LexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
+
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
   // const areLanguagesSelected =
@@ -100,50 +93,39 @@ export default function ResultsPage({
     }
   }, [clickedLexeme]);
 
-  // Debounced API call functions to prevent excessive calls on rapid language changes
-  const debouncedGetLexemeDetails = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          if (
-            selectedSourceLanguage &&
-            (selectedTargetLanguage1 || selectedTargetLanguage2)
-          ) {
-            getLexemeDetails();
-          }
-        }, 300); // 300ms debounce delay
-      };
-    })(),
-    [getLexemeDetails, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
-  );
 
-  const debouncedGetLexemeTranslations = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          if (
-            selectedSourceLanguage &&
-            (selectedTargetLanguage1 || selectedTargetLanguage2)
-          ) {
-            getLexemeTranslations();
-          }
-        }, 300); // 300ms debounce delay
-      };
-    })(),
-    [getLexemeTranslations, selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2]
-  );
 
-  // Auto-trigger API calls when language selections change
-  useEffect(() => {
-    if (selectedSourceLanguage && (selectedTargetLanguage1 || selectedTargetLanguage2)) {
-      debouncedGetLexemeDetails();
-      debouncedGetLexemeTranslations();
+  // Memoized filtered glosses data - this is our main optimization
+  const { sourceLexemeDetails, target1LexemeDetails, target2LexemeDetails } = useMemo(() => {
+    if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
+      return {
+        sourceLexemeDetails: [],
+        target1LexemeDetails: [],
+        target2LexemeDetails: []
+      };
     }
-  }, [selectedSourceLanguage, selectedTargetLanguage1, selectedTargetLanguage2, debouncedGetLexemeDetails, debouncedGetLexemeTranslations]);
+
+    // Filter glosses by language and return cached results
+    const sourceLang = selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedSourceLanguage?.lang_code
+    );
+    const target1Lang = selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedTargetLanguage1?.lang_code
+    );
+    const target2Lang = selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedTargetLanguage2?.lang_code
+    );
+
+    return {
+      sourceLexemeDetails: sourceLang,
+      target1LexemeDetails: target1Lang,
+      target2LexemeDetails: target2Lang
+    };
+  }, [selectedLexeme, selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code]);
+
 
   useEffect(() => {
     if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
@@ -151,42 +133,7 @@ export default function ResultsPage({
     }
 
     setSingleLexemeObj(selectedLexeme.lexeme);
-
-    // Use cached data if available, otherwise filter and cache
-    if (hasValidCache && dataCache) {
-      setSourceLexemeDetails(dataCache.sourceLang);
-      setTarget1LexemeDetails(dataCache.target1Lang);
-      setTarget2LexemeDetails(dataCache.target2Lang);
-    } else {
-      // Filter glosses by language and cache the results
-      const sourceLang = selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedSourceLanguage?.lang_code
-      );
-      const target1Lang = selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedTargetLanguage1?.lang_code
-      );
-      const target2Lang = selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedTargetLanguage2?.lang_code
-      );
-
-      setSourceLexemeDetails(sourceLang);
-      setTarget1LexemeDetails(target1Lang);
-      setTarget2LexemeDetails(target2Lang);
-
-      // Update cache if we have a valid cache key
-      if (cacheKey) {
-        setDataCache({
-          sourceLang,
-          target1Lang,
-          target2Lang,
-          cacheKey,
-        });
-      }
-    }
-  }, [selectedLexeme, selectedSourceLanguage?.lang_code, selectedTargetLanguage1?.lang_code, selectedTargetLanguage2?.lang_code, hasValidCache, dataCache, cacheKey]);
+  }, [selectedLexeme]);
 
 
   const handleGetLexemeDetails = useCallback(async () => {
@@ -197,12 +144,6 @@ export default function ResultsPage({
           "Please select a source language and at least one target language to get details.",
         variant: "destructive",
       });
-      return;
-    }
-
-    // Skip API call if we have valid cached data for this language combination
-    if (hasValidCache && dataCache) {
-      console.log("Using cached data, skipping API call");
       return;
     }
 
@@ -221,8 +162,6 @@ export default function ResultsPage({
     selectedTargetLanguage2?.lang_code,
     getLexemeDetails,
     getLexemeTranslations,
-    hasValidCache,
-    dataCache,
   ]);
 
   useEffect(() => {
@@ -257,10 +196,8 @@ export default function ResultsPage({
   };
 
 
+
   const onContributeSuccess = async () => {
-    // Clear cache since new data has been added
-    setDataCache(null);
-    
     // toast success
     toast({
       title: "Contribution saved",
