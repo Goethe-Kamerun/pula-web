@@ -5,26 +5,14 @@ import { Menu, User, Mic } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApiWithStore } from "@/hooks/useApiWithStore"
 import { useAuthStore } from "@/lib/stores/authStore"
-import type { AuthState } from '@/lib/stores/authStore';
+// removed explicit AuthState import because it's not exported from authStore
 import Logo from "./logo"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { login, logout } = useApiWithStore();
-  const token = useAuthStore((state: AuthState) => state.token);
-  const username = useAuthStore((state: AuthState) => state.username);
-  const hydrate = useAuthStore((state: AuthState) => state.hydrate);
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
-
-  useEffect(() => {
-    // Re-hydrate when token changes
-    if (token) {
-      hydrate();
-    }
-  }, [token, hydrate]);
+  const token = useAuthStore((state) => state.token);
+  const username = useAuthStore((state) => state.username);
 
   const handleLogin = async () => {
     try {
