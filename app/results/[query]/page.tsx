@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback, use, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -55,17 +55,35 @@ export default function ResultsPage({
     lexemeTranslations,
   } = useApiWithStore();
 
-  const [sourceLexemeDetails, setSourceLexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
-  const [target1LexemeDetails, setTarget1LexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
-  const [target2LexemeDetails, setTarget2LexemeDetails] = useState<
-    GlossWithSense[]
-  >([]);
+  const sourceLexemeDetails = useMemo(() => {
+    if (!selectedLexeme?.glosses) return [];
+    return selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedSourceLanguage?.lang_code
+    );
+  }, [selectedLexeme, selectedSourceLanguage?.lang_code]);
+
+  const target1LexemeDetails = useMemo(() => {
+    if (!selectedLexeme?.glosses) return [];
+    return selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedTargetLanguage1?.lang_code
+    );
+  }, [selectedLexeme, selectedTargetLanguage1?.lang_code]);
+
+  const target2LexemeDetails = useMemo(() => {
+    if (!selectedLexeme?.glosses) return [];
+    return selectedLexeme.glosses.filter(
+      (gloss: GlossWithSense) =>
+        gloss.gloss.language === selectedTargetLanguage2?.lang_code
+    );
+  }, [selectedLexeme, selectedTargetLanguage2?.lang_code]);
+
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [singleLexemeObj, setSingleLexemeObj] = useState<any>(null);
+  const singleLexemeObj = useMemo(
+    () => selectedLexeme?.lexeme || null,
+    [selectedLexeme]
+  );
   const areLanguagesSelected =
     selectedSourceLanguage &&
     selectedTargetLanguage1 &&
@@ -95,33 +113,9 @@ export default function ResultsPage({
       }
       handleGetLexemeDetails();
     }
-  }, [clickedLexeme]);
+  }, [clickedLexeme?.id, handleGetLexemeDetails, lexemeId, router]);
 
-  useEffect(() => {
-    if (!selectedLexeme || !selectedLexeme.lexeme || !selectedLexeme.glosses) {
-      return;
-    }
 
-    setSingleLexemeObj(selectedLexeme.lexeme);
-    setSourceLexemeDetails(
-      selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedSourceLanguage?.lang_code
-      )
-    );
-    setTarget1LexemeDetails(
-      selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedTargetLanguage1?.lang_code
-      )
-    );
-    setTarget2LexemeDetails(
-      selectedLexeme.glosses.filter(
-        (gloss: GlossWithSense) =>
-          gloss.gloss.language === selectedTargetLanguage2?.lang_code
-      )
-    );
-  }, [selectedLexeme]);
 
   const handleGetLexemeDetails = useCallback(async () => {
     if (
