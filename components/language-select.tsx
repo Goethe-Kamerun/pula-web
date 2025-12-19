@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -7,7 +6,11 @@ import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
 import { Tooltip } from "@/components/ui/tooltip-info";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -25,6 +28,8 @@ interface LanguageSelectProps {
   label?: string;
   span?: string;
   excludedLanguages?: string[];
+  disabled?: boolean;
+  helperText?: string;
 }
 
 export default function LanguageSelect({
@@ -34,6 +39,8 @@ export default function LanguageSelect({
   label,
   span,
   excludedLanguages = [],
+  disabled = false,
+  helperText,
 }: LanguageSelectProps) {
   const [open, setOpen] = React.useState(false);
   const { languages, loading, error } = useLanguageStore();
@@ -47,7 +54,6 @@ export default function LanguageSelect({
 
   return (
     <div>
-
       <div className=" flex items-center">
         {label && (
           <>
@@ -70,13 +76,24 @@ export default function LanguageSelect({
         )}
       </div>
 
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={disabled ? false : open}
+        onOpenChange={(nextOpen) => {
+          if (disabled) return;
+          setOpen(nextOpen);
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between bg-white font-normal"
+            aria-disabled={disabled}
+            disabled={disabled}
+            className={cn(
+              "w-full justify-between bg-white font-normal",
+              disabled && "pointer-events-none opacity-50 cursor-not-allowed"
+            )}
             style={{
               borderColor: "#a2a9b1",
               color: value ? "#222222" : "#72777d",
@@ -97,6 +114,7 @@ export default function LanguageSelect({
                     key={language.lang_code}
                     value={language.lang_label}
                     onSelect={() => {
+                      if (disabled) return;
                       onChange(language.lang_code);
                       setOpen(false);
                     }}
@@ -117,6 +135,10 @@ export default function LanguageSelect({
           </Command>
         </PopoverContent>
       </Popover>
+
+      {helperText && (
+        <p className="mt-1 text-xs text-[#72777d]">{helperText}</p>
+      )}
 
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
