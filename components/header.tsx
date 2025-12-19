@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button"
 import { useApiWithStore } from "@/hooks/useApiWithStore"
 import { useAuthStore } from "@/lib/stores/authStore"
 import Logo from "./logo"
+import LoginPromptModal from "./login-prompt-modal"
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { login, logout } = useApiWithStore();
   const token = useAuthStore((state) => state.token);
   const username = useAuthStore((state) => state.username);
@@ -42,6 +45,14 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     window.location.href = "/";
+  };
+
+  const handleRecordingStudioClick = () => {
+    if (!token) {
+      setIsLoginModalOpen(true);
+    } else {
+      window.location.href = "/contribute";
+    }
   };
 
   return (
@@ -103,15 +114,15 @@ export default function Header() {
             >
               FAQ
             </a>
-            <a
-              href="/contribute"
+            <button
+              onClick={handleRecordingStudioClick}
               className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
               style={{ color: "#0645ad" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#0b0080")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#0645ad")}
             >
               <Mic size="1em" className="max-sm:hidden" /> Record Studio
-            </a>
+            </button>
             {username ? (
               <div className="flex items-center space-x-2">
                 <User className="w-5 h-5" style={{ color: "#72777d" }} />
@@ -167,13 +178,13 @@ export default function Header() {
               >
                 About
               </a>
-              <a
-                href="#"
-                className="text-sm font-medium py-2 transition-colors hover:underline"
+              <button
+                onClick={handleRecordingStudioClick}
+                className="text-sm font-medium py-2 transition-colors hover:underline text-left"
                 style={{ color: "#0645ad" }}
               >
                 Contribute
-              </a>
+              </button>
               <a
                 className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
                 href="/faq"
@@ -187,6 +198,11 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      <LoginPromptModal
+        open={isLoginModalOpen}
+        onOpenChange={setIsLoginModalOpen}
+      />
     </header>
   );
 }

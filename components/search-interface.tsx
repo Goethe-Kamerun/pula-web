@@ -71,19 +71,25 @@ export default function SearchInterface() {
       {/* Language Selection */}
       <div className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div data-tour="source-language">
-            <LanguageSelect
-              value={selectedSourceLanguage?.lang_code || ""}
-              onChange={(langCode) => {
-                const language = languages.find(
-                  (lang) => lang.lang_code === langCode
-                );
-                setSelectedSourceLanguage(language || null);
-              }}
-              placeholder="Select source language"
-              label="Source Language"
-            />
-          </div>
+          <LanguageSelect
+            value={selectedSourceLanguage?.lang_code || ""}
+            onChange={(langCode) => {
+              const language = languages.find(
+                (lang) => lang.lang_code === langCode
+              );
+              setSelectedSourceLanguage(language || null);
+
+              // Clear targets if they match the new source
+              if (selectedTargetLanguage1?.lang_code === langCode) {
+                setSelectedTargetLanguage1(null);
+              }
+              if (selectedTargetLanguage2?.lang_code === langCode) {
+                setSelectedTargetLanguage2(null);
+              }
+            }}
+            placeholder="Select source language"
+            label="Source Language"
+          />
           <LanguageSelect
             value={selectedTargetLanguage1?.lang_code || ""}
             onChange={(langCode) => {
@@ -91,10 +97,19 @@ export default function SearchInterface() {
                 (lang) => lang.lang_code === langCode
               );
               setSelectedTargetLanguage1(language || null);
+
+              // Clear target 2 if it matches the new target 1
+              if (selectedTargetLanguage2?.lang_code === langCode) {
+                setSelectedTargetLanguage2(null);
+              }
             }}
             placeholder="Select target language 1"
             label="Target Language 1"
             span="*"
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage2 ? [selectedTargetLanguage2.lang_code] : []),
+            ]}
           />
           <LanguageSelect
             value={selectedTargetLanguage2?.lang_code || ""}
@@ -106,6 +121,10 @@ export default function SearchInterface() {
             }}
             placeholder="Select target language 2"
             label="Target Language 2 (optional)"
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage1 ? [selectedTargetLanguage1.lang_code] : []),
+            ]}
           />
         </div>
       </div>
