@@ -15,54 +15,71 @@ const tourSteps: TourStep[] = [
   {
     target: "body",
     title: "Welcome!",
-    content: "Welcome to Pula, Let me show you around and explain the key features.",
+    content:
+      "Welcome to Pula, Let me show you around and explain the key features.",
     placement: "bottom",
   },
   {
     target: "[data-tour='header']",
     title: "Header",
-    content: "This is the header with the app logo and navigation. You can access the Record Studio to contribute audio recordings here.",
+    content:
+      "This is the header with the app logo and navigation. You can access the Record Studio to contribute audio recordings here.",
     placement: "bottom",
   },
   {
     target: "[data-tour='page-title']",
     title: "Getting Started",
-    content: "This page helps you explore words and phrases across different languages.",
+    content:
+      "This page helps you explore words and phrases across different languages.",
     placement: "bottom",
   },
   {
     target: "[data-tour='source-language']",
     title: "Source Language",
-    content: "Start by selecting your source language - this is the language you want to translate FROM.",
+    content:
+      "Start by selecting your source language - this is the language you want to translate FROM.",
     placement: "bottom",
   },
   {
     target: "[data-tour='target-languages']",
     title: "Target Languages",
-    content: "Select one or two target languages - these are the languages you want to translate TO. At least one is required.",
+    content:
+      "Select one or two target languages - these are the languages you want to translate TO. At least one is required.",
     placement: "bottom",
   },
   {
     target: "[data-tour='search-input']",
     title: "Search",
-    content: "Once you've selected your languages, use this search box to find words and phrases. You can search by typing or by selecting from a list.",
+    content:
+      "Once you've selected your languages, use this search box to find words and phrases. You can search by typing or by selecting from a list.",
     placement: "top",
   },
   {
     target: "body",
     title: "All Set!",
-    content: "That's it! You're ready to explore. You can always revisit this tour if you need help. Happy exploring!",
+    content:
+      "That's it! You're ready to explore. You can always revisit this tour if you need help. Happy exploring!",
     placement: "bottom",
   },
 ];
 
 export default function Onboarding() {
-  const { isOnboardingVisible, isOnboardingCompleted, setOnboardingCompleted, setOnboardingVisible, hydrate } =
-    useOnboardingStore();
+  const {
+    isOnboardingVisible,
+    isOnboardingCompleted,
+    setOnboardingCompleted,
+    setOnboardingVisible,
+    hydrate,
+  } = useOnboardingStore();
   const [currentStep, setCurrentStep] = useState(0);
   const [showTour, setShowTour] = useState(false);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
-  const [highlightPos, setHighlightPos] = useState({ top: 0, left: 0, width: 0, height: 0 });
+  const [highlightPos, setHighlightPos] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+  });
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,7 +96,10 @@ export default function Onboarding() {
     if (!showTour) return;
 
     const step = tourSteps[currentStep];
-    const element = step.target === "body" ? document.body : document.querySelector(step.target);
+    const element =
+      step.target === "body"
+        ? document.body
+        : document.querySelector(step.target);
 
     if (element && element !== document.body) {
       const rect = element.getBoundingClientRect();
@@ -187,7 +207,9 @@ export default function Onboarding() {
           </button>
         </div>
 
-        <p className="text-sm text-gray-600 mb-4 leading-relaxed">{step.content}</p>
+        <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+          {step.content}
+        </p>
 
         {/* Progress bar */}
         <div className="w-full bg-gray-200 rounded-full h-1 mb-4">

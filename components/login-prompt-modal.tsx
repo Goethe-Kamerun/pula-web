@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 
 import { useApiWithStore } from "@/hooks/useApiWithStore";
-import { useAuthStore } from "@/lib/stores/authStore";
 
 interface LoginPromptModalProps {
   open: boolean;
@@ -22,17 +21,15 @@ export default function LoginPromptModal({
   open,
   onOpenChange,
 }: LoginPromptModalProps) {
-
   const { login } = useApiWithStore();
-  const hydrate = useAuthStore((state) => state.hydrate);
 
   const handleLogin = async () => {
     try {
       const data = await login();
       if (data.redirect_string) {
         // Store request_token for use in callback
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('request_token', data.request_token);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("request_token", data.request_token);
         }
         window.location.href = data.redirect_string;
       }
@@ -54,13 +51,17 @@ export default function LoginPromptModal({
             Login Required
           </DialogTitle>
           <DialogDescription>
-            You need to log in to access the Recording Studio. Please log in with your Wikimedia account to continue contributing audio translations.
+            You need to log in to access the Recording Studio. Please log in
+            with your Wikimedia account to continue contributing audio
+            translations.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 mb-2">Why do I need to log in?</h4>
+            <h4 className="font-medium text-blue-900 mb-2">
+              Why do I need to log in?
+            </h4>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• Save your recording progress</li>
               <li>• Contribute to Wikimedia Commons</li>
@@ -70,10 +71,7 @@ export default function LoginPromptModal({
           </div>
 
           <div className="flex justify-end space-x-2">
-            <Button
-              variant="outline"
-              onClick={handleClose}
-            >
+            <Button variant="outline" onClick={handleClose}>
               Cancel
             </Button>
             <Button onClick={handleLogin} className="flex items-center gap-2">

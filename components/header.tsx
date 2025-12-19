@@ -1,14 +1,12 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Menu, User, Mic } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useApiWithStore } from "@/hooks/useApiWithStore"
-import { useAuthStore } from "@/lib/stores/authStore"
-import type { AuthState } from '@/lib/stores/authStore';
-import Logo from "./logo"
-import LoginPromptModal from "./login-prompt-modal"
-
+import { useEffect, useState } from "react";
+import { Menu, User, Mic } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useApiWithStore } from "@/hooks/useApiWithStore";
+import { useAuthStore } from "@/lib/stores/authStore";
+import Logo from "./logo";
+import LoginPromptModal from "./login-prompt-modal";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,17 +55,24 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b bg-white" style={{ borderColor: "#a2a9b1" }} data-tour="header">
+    <header
+      className="border-b bg-white"
+      style={{ borderColor: "#a2a9b1" }}
+      data-tour="header"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Title */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="text-sm font-medium cursor-pointer" style={{ color: "#222222" }}>
+              <div
+                className="text-sm font-medium cursor-pointer"
+                style={{ color: "#222222" }}
+              >
                 {/* <a href="/">
                   <img src="/logo.jpg" alt="Logo" className="h-10" />
                 </a> */}
-                <Logo/>
+                <Logo />
               </div>
             </div>
             <div

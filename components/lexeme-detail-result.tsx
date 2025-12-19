@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import {
   GlossWithSense,
   LexemeDetail,
@@ -9,7 +7,6 @@ import {
 } from "@/lib/types/api";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useEffect, useState } from "react";
 import { Tooltip } from "@/components/ui/tooltip-info";
@@ -23,15 +20,11 @@ interface LexemeDetailResultProps {
 }
 
 export default function LexemeDetailResultComponent({
-  title,
   glossesWithSense,
   lexemeDetail,
   translation,
   onContribute,
 }: LexemeDetailResultProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { login, logout } = useApiWithStore();
-
   const token = useAuthStore((state) => state.token);
   const hydrate = useAuthStore((state) => state.hydrate);
 
@@ -127,7 +120,6 @@ export default function LexemeDetailResultComponent({
                           {translation.trans_language}
                         </p>
                       </div>
-
                     ) : (
                       <div className="flex items-center gap-2">
                         <Button
@@ -143,7 +135,8 @@ export default function LexemeDetailResultComponent({
                             e.currentTarget.style.backgroundColor = "#f0f8ff";
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }}
                           onClick={() => onContribute?.("translation")}
                         >
@@ -206,7 +199,6 @@ export default function LexemeDetailResultComponent({
                         >
                           {glossWithSense.gloss.value}
                         </p>
-
                       ) : (
                         <div className="flex items-center gap-2">
                           <Button
@@ -256,7 +248,6 @@ export default function LexemeDetailResultComponent({
                       />
                       Your browser does not support the audio element.
                     </audio>
-
                   ) : (
                     <>
                       <p className="text-xs pb-1 italic">No audio found.</p>
@@ -274,7 +265,8 @@ export default function LexemeDetailResultComponent({
                             e.currentTarget.style.backgroundColor = "#f0f8ff";
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }}
                           onClick={() => onContribute?.("audio")}
                         >

@@ -44,9 +44,6 @@ export default function ContributeTranslationModal({
   const { selectedLexeme, addTranslation } = useApiWithStore();
 
   const handleSubmit = async () => {
-    // console.log("selectedLexeme", selectedLexeme);
-    // console.log("lexemeTranslations", lexemeTranslations);
-    // console.log("language", language);
     const baseLexeme =
       lexemeTranslations?.find((t) => t.trans_language === language?.lang_code)
         ?.base_lexeme || "";
@@ -66,8 +63,6 @@ export default function ContributeTranslationModal({
           categoryId: selectedLexeme?.lexeme?.lexicalCategoryId || "",
         },
       ];
-      console.log("request", request);
-      // return;
       setIsSubmitting(true);
       await addTranslation(request);
       onSuccess?.();
