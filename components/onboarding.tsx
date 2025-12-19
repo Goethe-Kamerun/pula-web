@@ -189,11 +189,15 @@ export default function Onboarding() {
 
         <p className="text-sm text-gray-600 mb-4 leading-relaxed">{step.content}</p>
 
+
         {/* Progress bar */}
         <div className="w-full bg-gray-200 rounded-full h-1 mb-4">
           <div
-            className="bg-blue-600 h-1 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-1 rounded-full transition-all duration-300"
+            style={{ 
+              width: `${progress}%`,
+              backgroundColor: "#0645ad"
+            }}
           />
         </div>
 
@@ -220,9 +224,13 @@ export default function Onboarding() {
             Skip
           </button>
 
+
           <button
             onClick={handleNext}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center"
+            className="px-4 py-2 text-sm font-medium text-white rounded-md transition-colors flex items-center"
+            style={{ backgroundColor: "#0645ad" }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#0b0080"}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0645ad"}
           >
             {currentStep === tourSteps.length - 1 ? (
               "Finish"
