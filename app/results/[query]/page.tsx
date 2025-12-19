@@ -234,7 +234,6 @@ export default function ResultsPage({
                   }}
                   placeholder="Select target language 2"
                   label="Target Language 2"
-                  span="*"
                 />
               </div>
             </div>
@@ -318,13 +317,19 @@ export default function ResultsPage({
                   </div>
                 )}
                 <Tabs defaultValue="target1" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList
+                    className={`grid w-full ${
+                      selectedTargetLanguage2 ? "grid-cols-2" : "grid-cols-1"
+                    }`}
+                  >
                     <TabsTrigger value="target1">
                       {selectedTargetLanguage1?.lang_label || "Target 1"}
                     </TabsTrigger>
-                    <TabsTrigger value="target2">
-                      {selectedTargetLanguage2?.lang_label || "Target 2"}
-                    </TabsTrigger>
+                    {selectedTargetLanguage2 && (
+                      <TabsTrigger value="target2">
+                        {selectedTargetLanguage2.lang_label}
+                      </TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="target1" className="mt-4">
