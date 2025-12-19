@@ -209,12 +209,22 @@ export const useApiWithStore = () => {
         localStorage.removeItem(SELECTED_LEXEME);
       }
 
-      // Show toast notification for error
-      toast({
-        title: "Error loading lexeme details",
-        description: apiError.message,
-        variant: "destructive",
-      });
+      if (
+        apiError.message.includes("500") ||
+        apiError.message.includes("Internal Server Error")
+      ) {
+        setLexemeError(null);
+      } else {
+        // Only set the error for legitimate issues (like 404 or Network Down)
+        setLexemeError(apiError.message);
+
+        // Only show toast for non-500 errors
+        toast({
+          title: "Error loading lexeme details",
+          description: apiError.message,
+          variant: "destructive",
+        });
+      }
 
       throw apiError;
     } finally {
@@ -226,10 +236,6 @@ export const useApiWithStore = () => {
    * Get the translations of a lexeme and store it in the store and local storage
    */
   const getLexemeTranslations = useCallback(async () => {
-    setLexemeLoading(true);
-    setLexemeError(null);
-
-    // Get required parameters from stores
     const clickedLexeme = useLexemeStore.getState().clickedLexeme;
     const selectedSourceLanguage =
       useLanguageStore.getState().selectedSourceLanguage;
@@ -238,43 +244,64 @@ export const useApiWithStore = () => {
     const selectedTargetLanguage2 =
       useLanguageStore.getState().selectedTargetLanguage2;
 
-    if (!clickedLexeme || !selectedSourceLanguage || !selectedTargetLanguage1) {
+    if (
+      !clickedLexeme?.id ||
+      !selectedSourceLanguage?.lang_code ||
+      !selectedTargetLanguage1?.lang_code
+    ) {
       return;
     }
+
+    setLexemeLoading(true);
+    setLexemeError(null);
 
     let request: LexemeDetailRequest = {
       id: clickedLexeme.id,
       src_lang: selectedSourceLanguage.lang_code,
       lang_1: selectedTargetLanguage1.lang_code,
-      ...(selectedTargetLanguage2 && {
+      ...(selectedTargetLanguage2?.lang_code && {
         lang_2: selectedTargetLanguage2.lang_code,
       }),
     };
 
     try {
       const translations = await api.getLexemeTranslations(request);
+
       if (typeof window !== "undefined") {
         localStorage.setItem(
           SELECTED_LEXEME_TRANSLATIONS,
           JSON.stringify(translations)
         );
       }
+
       setLexemeTranslations(translations);
       return translations;
     } catch (error) {
       const apiError = error as ApiError;
+
       setLexemeError(apiError.message);
       setLexemeTranslations(null);
+
       if (typeof window !== "undefined") {
         localStorage.removeItem(SELECTED_LEXEME_TRANSLATIONS);
       }
 
-      // Show toast notification for error
-      toast({
-        title: "Error loading lexeme translations",
-        description: apiError.message,
-        variant: "destructive",
-      });
+      if (
+        apiError.message.includes("500") ||
+        apiError.message.includes("Internal Server Error")
+      ) {
+        setLexemeError(null);
+      } else {
+        // Only set the error for legitimate issues (like 404 or Network Down)
+        setLexemeError(apiError.message);
+
+        // Only show toast for non-500 errors
+        toast({
+          title: "Error loading lexeme translations",
+          description: apiError.message,
+          variant: "destructive",
+        });
+      }
 
       throw apiError;
     } finally {
