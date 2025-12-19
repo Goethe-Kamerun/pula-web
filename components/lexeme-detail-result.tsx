@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import {
   GlossWithSense,
   LexemeDetail,
@@ -8,9 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
-import type { AuthState } from "@/lib/stores/authStore";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useEffect, useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 interface LexemeDetailResultProps {
   title?: string;
@@ -29,8 +31,9 @@ export default function LexemeDetailResultComponent({
 }: LexemeDetailResultProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { login, logout } = useApiWithStore();
-  const token = useAuthStore((state: AuthState) => state.token);
-  const hydrate = useAuthStore((state: AuthState) => state.hydrate);
+
+  const token = useAuthStore((state) => state.token);
+  const hydrate = useAuthStore((state) => state.hydrate);
 
   useEffect(() => {
     hydrate();
@@ -124,26 +127,30 @@ export default function LexemeDetailResultComponent({
                           {translation.trans_language}
                         </p>
                       </div>
+
                     ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                        style={{
-                          color: "#0645ad",
-                          borderColor: "#0645ad",
-                          backgroundColor: "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f0f8ff";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
-                        onClick={() => onContribute?.("translation")}
-                      >
-                        Contribute translation
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                          style={{
+                            color: "#0645ad",
+                            borderColor: "#0645ad",
+                            backgroundColor: "transparent",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#f0f8ff";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                          onClick={() => onContribute?.("translation")}
+                        >
+                          Contribute translation
+                        </Button>
+                        <Tooltip description="Add a translation for this word in the target language to help others understand its meaning." />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -199,27 +206,31 @@ export default function LexemeDetailResultComponent({
                         >
                           {glossWithSense.gloss.value}
                         </p>
+
                       ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-xs"
-                          style={{
-                            color: "#0645ad",
-                            borderColor: "#0645ad",
-                            backgroundColor: "transparent",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = "#f0f8ff";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor =
-                              "transparent";
-                          }}
-                          onClick={() => onContribute?.("description")}
-                        >
-                          Add Description
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs"
+                            style={{
+                              color: "#0645ad",
+                              borderColor: "#0645ad",
+                              backgroundColor: "transparent",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = "#f0f8ff";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor =
+                                "transparent";
+                            }}
+                            onClick={() => onContribute?.("description")}
+                          >
+                            Add Description
+                          </Button>
+                          <Tooltip description="Provide a description or definition for this word to help explain its meaning and usage." />
+                        </div>
                       )}
                       <p className="text-sm" style={{ color: "#72777d" }}>
                         {glossWithSense.gloss.language}
@@ -245,28 +256,32 @@ export default function LexemeDetailResultComponent({
                       />
                       Your browser does not support the audio element.
                     </audio>
+
                   ) : (
                     <>
                       <p className="text-xs pb-1 italic">No audio found.</p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                        style={{
-                          color: "#0645ad",
-                          borderColor: "#0645ad",
-                          backgroundColor: "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#f0f8ff";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
-                        onClick={() => onContribute?.("audio")}
-                      >
-                        Contribute audio translation
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                          style={{
+                            color: "#0645ad",
+                            borderColor: "#0645ad",
+                            backgroundColor: "transparent",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#f0f8ff";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                          onClick={() => onContribute?.("audio")}
+                        >
+                          Contribute audio translation
+                        </Button>
+                        <Tooltip description="Record or upload an audio file of this word being pronounced to help others learn the correct pronunciation." />
+                      </div>
                     </>
                   )}
                 </div>
