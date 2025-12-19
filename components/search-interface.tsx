@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +7,7 @@ import LanguageSelect from "@/components/language-select";
 import SearchInput from "@/components/search-input";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
+import { Tooltip } from "@/components/ui/tooltip-info";
 
 export default function SearchInterface() {
   // const [searchQuery, setSearchQuery] = useState("")
@@ -23,12 +25,11 @@ export default function SearchInterface() {
     setSelectedTargetLanguage1,
     setSelectedTargetLanguage2,
     clickedLexeme,
+    isSearchReady,
   } = useApiWithStore();
 
-  const areLanguagesSelected =
-    selectedSourceLanguage &&
-    selectedTargetLanguage1 &&
-    selectedTargetLanguage2;
+  // const areLanguagesSelected =
+  //   selectedSourceLanguage && selectedTargetLanguage1;
   // const areLanguagesSelected = true;
 
   // Load languages when component mounts
@@ -43,7 +44,7 @@ export default function SearchInterface() {
   }, [clickedLexeme]);
 
   const handleSearch = (query: string) => {
-    if (!areLanguagesSelected) {
+    if (!isSearchReady) {
       toast({
         title: "Languages required",
         description:
@@ -57,7 +58,7 @@ export default function SearchInterface() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Page Title */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-12" data-tour="page-title">
         <h1 className="text-3xl font-normal mb-4" style={{ color: "#222222" }}>
           Explore words and phrases in other languages
         </h1>
@@ -77,6 +78,14 @@ export default function SearchInterface() {
                 (lang) => lang.lang_code === langCode
               );
               setSelectedSourceLanguage(language || null);
+
+              // Clear targets if they match the new source
+              if (selectedTargetLanguage1?.lang_code === langCode) {
+                setSelectedTargetLanguage1(null);
+              }
+              if (selectedTargetLanguage2?.lang_code === langCode) {
+                setSelectedTargetLanguage2(null);
+              }
             }}
             placeholder="Select source language"
             label="Source Language"
@@ -88,10 +97,19 @@ export default function SearchInterface() {
                 (lang) => lang.lang_code === langCode
               );
               setSelectedTargetLanguage1(language || null);
+
+              // Clear target 2 if it matches the new target 1
+              if (selectedTargetLanguage2?.lang_code === langCode) {
+                setSelectedTargetLanguage2(null);
+              }
             }}
             placeholder="Select target language 1"
             label="Target Language 1"
             span="*"
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage2 ? [selectedTargetLanguage2.lang_code] : []),
+            ]}
           />
           <LanguageSelect
             value={selectedTargetLanguage2?.lang_code || ""}
@@ -102,24 +120,28 @@ export default function SearchInterface() {
               setSelectedTargetLanguage2(language || null);
             }}
             placeholder="Select target language 2"
-            label="Target Language 2"
-            span="*"
+            label="Target Language 2 (optional)"
+            excludedLanguages={[
+              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
+              ...(selectedTargetLanguage1 ? [selectedTargetLanguage1.lang_code] : []),
+            ]}
           />
         </div>
       </div>
 
       {/* Search Input */}
-      <div className="mb-8">
+      <div className="mb-8" data-tour="search-input">
         <SearchInput
-          disabled={!areLanguagesSelected}
+          disabled={!isSearchReady}
           onSearch={handleSearch}
           value={""}
           onChange={(v) => null}
         />
       </div>
 
+
       {/* Instructions */}
-      {!areLanguagesSelected && (
+      {!isSearchReady && (
         <div
           className="border rounded p-4 text-center"
           style={{
@@ -127,10 +149,13 @@ export default function SearchInterface() {
             borderColor: "#a2a9b1",
           }}
         >
-          <p style={{ color: "#72777d" }}>
-            Please select a source language and at least one target language to
-            enable search
-          </p>
+          <div className="flex items-center justify-center gap-2">
+            <p style={{ color: "#72777d" }}>
+              Please select a source language and at least one target language to
+              enable search
+            </p>
+            <Tooltip description="Select your source language (what you're translating from) and one or more target languages (what you're translating to) to search for words and contribute translations." />
+          </div>
         </div>
       )}
 
