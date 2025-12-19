@@ -7,12 +7,26 @@ import { useApiWithStore } from "@/hooks/useApiWithStore"
 import { useAuthStore } from "@/lib/stores/authStore"
 // removed explicit AuthState import because it's not exported from authStore
 import Logo from "./logo"
+import LoginPromptModal from "./login-prompt-modal"
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { login, logout } = useApiWithStore();
   const token = useAuthStore((state) => state.token);
   const username = useAuthStore((state) => state.username);
+  const hydrate = useAuthStore((state) => state.hydrate);
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  useEffect(() => {
+    // Re-hydrate when token changes
+    if (token) {
+      hydrate();
+    }
+  }, [token, hydrate]);
 
   const handleLogin = async () => {
     try {
@@ -34,8 +48,16 @@ export default function Header() {
     window.location.href = "/";
   };
 
+  const handleRecordingStudioClick = () => {
+    if (!token) {
+      setIsLoginModalOpen(true);
+    } else {
+      window.location.href = "/contribute";
+    }
+  };
+
   return (
-    <header className="border-b bg-white" style={{ borderColor: "#a2a9b1" }}>
+    <header className="border-b bg-white" style={{ borderColor: "#a2a9b1" }} data-tour="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Title */}
@@ -93,15 +115,15 @@ export default function Header() {
             >
               FAQ
             </a>
-            <a
-              href="/contribute"
+            <button
+              onClick={handleRecordingStudioClick}
               className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
               style={{ color: "#0645ad" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#0b0080")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#0645ad")}
             >
               <Mic size="1em" className="max-sm:hidden" /> Record Studio
-            </a>
+            </button>
             {username ? (
               <div className="flex items-center space-x-2">
                 <User className="w-5 h-5" style={{ color: "#72777d" }} />
@@ -157,13 +179,13 @@ export default function Header() {
               >
                 About
               </a>
-              <a
-                href="#"
-                className="text-sm font-medium py-2 transition-colors hover:underline"
+              <button
+                onClick={handleRecordingStudioClick}
+                className="text-sm font-medium py-2 transition-colors hover:underline text-left"
                 style={{ color: "#0645ad" }}
               >
                 Contribute
-              </a>
+              </button>
               <a
                 className="text-sm font-medium transition-colors hover:underline flex items-center gap-2"
                 href="/faq"
@@ -177,6 +199,11 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      <LoginPromptModal
+        open={isLoginModalOpen}
+        onOpenChange={setIsLoginModalOpen}
+      />
     </header>
   );
 }
