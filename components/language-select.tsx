@@ -1,13 +1,16 @@
-
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
 import { Tooltip } from "@/components/ui/tooltip-info";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -40,14 +43,13 @@ export default function LanguageSelect({
 
   // Filter languages based on excluded languages
   const filteredLanguages = languages.filter(
-    (language) => !excludedLanguages.includes(language.lang_code)
+    (language) => !excludedLanguages.includes(language.lang_code),
   );
 
   const selectedLanguage = languages.find((lang) => lang.lang_code === value);
 
   return (
     <div>
-
       <div className=" flex items-center">
         {label && (
           <>
@@ -106,7 +108,7 @@ export default function LanguageSelect({
                         "mr-2 h-4 w-4",
                         value === language.lang_code
                           ? "opacity-100"
-                          : "opacity-0"
+                          : "opacity-0",
                       )}
                     />
                     {language.lang_label}

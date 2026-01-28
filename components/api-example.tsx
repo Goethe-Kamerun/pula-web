@@ -35,6 +35,7 @@ export const ApiExample = () => {
       ismatch: 0,
       search: searchTerm,
       src_lang: selectedLanguage,
+      with_sense: true,
     });
   };
 

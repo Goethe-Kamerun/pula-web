@@ -201,7 +201,7 @@ const nextConfig = {
   configFileName: "next.config.ts",
   turbopack: {
     rules: { "*.lottie": ["@noxfed/lottie-webpack-loader"] },
-    root: "/builds/collins/agpb-v4-web",
+    root: "/builds/collins/pulac-v4-web",
   },
   serverExternalPackages: [
     "amqplib",

@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import * as Accordion from "@radix-ui/react-accordion";
+import { Accordion } from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 
 const FAQS = [
