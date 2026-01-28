@@ -1,6 +1,11 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Accordion } from "@radix-ui/react-accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import { ChevronDown } from "lucide-react";
 
 const FAQS = [
@@ -61,28 +66,26 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
 
-          <Accordion.Root type="multiple" className="space-y-4">
+          <Accordion type="multiple" className="space-y-4">
             {FAQS.map((faq, index) => (
-              <Accordion.Item
+              <AccordionItem
                 key={index}
                 value={`item-${index}`}
                 className="border border-gray-300 rounded-lg bg-white"
               >
-                <Accordion.Header>
-                  <Accordion.Trigger className="text-[#222222] group flex w-full items-center justify-between p-4 text-left font-medium">
-                    {faq.question}
-                    <ChevronDown className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180 " />
-                  </Accordion.Trigger>
-                </Accordion.Header>
+                <AccordionTrigger className="text-[#222222] group flex w-full items-center justify-between p-4 text-left font-medium">
+                  {faq.question}
+                  <ChevronDown className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180 " />
+                </AccordionTrigger>
 
-                <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                <AccordionContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                   <div className=" px-4 pb-4 text-gray-700 max-h-64 overflow-y-auto ">
                     {faq.answer}
                   </div>
-                </Accordion.Content>
-              </Accordion.Item>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </Accordion.Root>
+          </Accordion>
         </div>
       </main>
       <Footer />

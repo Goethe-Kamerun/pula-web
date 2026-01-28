@@ -1,11 +1,8 @@
-import type React from "react"
-import "./globals.css"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import OnboardingWrapper from "@/components/onboarding-wrapper"
-import { TooltipProvider } from "@/components/tooltip-provider"
-
-const inter = Inter({ subsets: ["latin"] })
+import type React from "react";
+import "./globals.css";
+import type { Metadata } from "next";
+import OnboardingWrapper from "@/components/onboarding-wrapper";
+import { TooltipProvider } from "@/components/tooltip-provider";
 
 export const metadata: Metadata = {
   title: "PULA - People's Universal Lexical Access",
@@ -15,25 +12,23 @@ export const metadata: Metadata = {
   robots: "index, follow",
   openGraph: {
     title: "PULA - People's Universal Lexical Access",
-    description: "Easy translation from any base language to any target language",
-  }
-}
+    description:
+      "Easy translation from any base language to any target language",
+  },
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <OnboardingWrapper>
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </OnboardingWrapper>
       </body>
     </html>
-  )
+  );
 }
