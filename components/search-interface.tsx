@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LanguageSelect from "@/components/language-select";
 import SearchInput from "@/components/search-input";
@@ -10,12 +9,10 @@ import { useApiWithStore } from "@/hooks/useApiWithStore";
 import { Tooltip } from "@/components/ui/tooltip-info";
 
 export default function SearchInterface() {
-  // const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter();
   const { toast } = useToast();
   const {
     getLanguages,
-    languageLoading,
     languageError,
     languages,
     selectedSourceLanguage,
@@ -27,10 +24,6 @@ export default function SearchInterface() {
     clickedLexeme,
     isSearchReady,
   } = useApiWithStore();
-
-  // const areLanguagesSelected =
-  //   selectedSourceLanguage && selectedTargetLanguage1;
-  // const areLanguagesSelected = true;
 
   // Load languages when component mounts
   useEffect(() => {
@@ -107,8 +100,12 @@ export default function SearchInterface() {
             label="Target Language 1"
             span="*"
             excludedLanguages={[
-              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
-              ...(selectedTargetLanguage2 ? [selectedTargetLanguage2.lang_code] : []),
+              ...(selectedSourceLanguage
+                ? [selectedSourceLanguage.lang_code]
+                : []),
+              ...(selectedTargetLanguage2
+                ? [selectedTargetLanguage2.lang_code]
+                : []),
             ]}
           />
           <LanguageSelect
@@ -122,8 +119,12 @@ export default function SearchInterface() {
             placeholder="Select target language 2"
             label="Target Language 2 (optional)"
             excludedLanguages={[
-              ...(selectedSourceLanguage ? [selectedSourceLanguage.lang_code] : []),
-              ...(selectedTargetLanguage1 ? [selectedTargetLanguage1.lang_code] : []),
+              ...(selectedSourceLanguage
+                ? [selectedSourceLanguage.lang_code]
+                : []),
+              ...(selectedTargetLanguage1
+                ? [selectedTargetLanguage1.lang_code]
+                : []),
             ]}
           />
         </div>
@@ -139,7 +140,6 @@ export default function SearchInterface() {
         />
       </div>
 
-
       {/* Instructions */}
       {!isSearchReady && (
         <div
@@ -151,8 +151,8 @@ export default function SearchInterface() {
         >
           <div className="flex items-center justify-center gap-2">
             <p style={{ color: "#72777d" }}>
-              Please select a source language and at least one target language to
-              enable search
+              Please select a source language and at least one target language
+              to enable search
             </p>
             <Tooltip description="Select your source language (what you're translating from) and one or more target languages (what you're translating to) to search for words and contribute translations." />
           </div>

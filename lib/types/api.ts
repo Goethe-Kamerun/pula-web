@@ -10,7 +10,7 @@ export interface LexemeSearchRequest {
   ismatch: number;
   search: string;
   src_lang: string;
-  with_sense: boolean
+  with_sense: boolean;
 }
 
 export interface LexemeSearchResult {
@@ -34,7 +34,7 @@ export interface Gloss {
   audio?: string;
   formId: string;
   categoryid?: string;
-  categoryLabel?: string
+  categoryLabel?: string;
 }
 
 export interface GlossWithSense {
@@ -93,7 +93,8 @@ export interface AddAudioTranslationRequest {
   formid: string;
   lang_label: string;
   lang_wdqid: string;
-}[]
+}
+[];
 
 export interface LoginResponse {
   redirect_string: string;
@@ -112,17 +113,17 @@ export interface OauthCallbackRequest {
 }
 
 export interface LexemeMissingAudioResponse {
-  lexeme_id: string,
-  sense_id: string,
-  lemma: string,
-  categoryId: string,
-  categoryLabel: string,
-  formId: string
+  lexeme_id: string;
+  sense_id: string;
+  lemma: string;
+  categoryId: string;
+  categoryLabel: string;
+  formId: string;
 }
 
 export interface LexemeMissingAudioResquest {
-  lang_code: string,
-  lang_wdqid: string,
-  page: number | 1,
-  page_size: number | 15
+  lang_code: string;
+  lang_wdqid: string;
+  page: number | 1;
+  page_size: number | 15;
 }

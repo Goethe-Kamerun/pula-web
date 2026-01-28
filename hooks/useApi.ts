@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { api } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
+import { useState, useCallback } from "react";
+import { api } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Language,
   LexemeSearchRequest,
@@ -8,7 +8,7 @@ import {
   LexemeDetailRequest,
   LexemeDetailResult,
   ApiError,
-} from '@/lib/types/api';
+} from "@/lib/types/api";
 
 interface ApiState<T> {
   data: T | null;
@@ -24,20 +24,24 @@ export const useApi = () => {
     error: null,
   });
 
-  const [searchState, setSearchState] = useState<ApiState<LexemeSearchResult[]>>({
+  const [searchState, setSearchState] = useState<
+    ApiState<LexemeSearchResult[]>
+  >({
     data: null,
     loading: false,
     error: null,
   });
 
-  const [detailsState, setDetailsState] = useState<ApiState<LexemeDetailResult[]>>({
+  const [detailsState, setDetailsState] = useState<
+    ApiState<LexemeDetailResult[]>
+  >({
     data: null,
     loading: false,
     error: null,
   });
 
   const getLanguages = useCallback(async () => {
-    setLanguagesState(prev => ({ ...prev, loading: true, error: null }));
+    setLanguagesState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const data = await api.getLanguages();
       setLanguagesState({ data, loading: false, error: null });
@@ -45,59 +49,65 @@ export const useApi = () => {
     } catch (error) {
       const apiError = error as ApiError;
       setLanguagesState({ data: null, loading: false, error: apiError });
-      
+
       // Show toast notification for error
       toast({
         title: "Error loading languages",
         description: apiError.message,
         variant: "destructive",
       });
-      
+
       throw apiError;
     }
   }, [toast]);
 
-  const searchLexemes = useCallback(async (request: LexemeSearchRequest) => {
-    setSearchState(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      const data = await api.searchLexemes(request);
-      setSearchState({ data, loading: false, error: null });
-      return data;
-    } catch (error) {
-      const apiError = error as ApiError;
-      setSearchState({ data: null, loading: false, error: apiError });
-      
-      // Show toast notification for error
-      toast({
-        title: "Error searching lexemes",
-        description: apiError.message,
-        variant: "destructive",
-      });
-      
-      throw apiError;
-    }
-  }, [toast]);
+  const searchLexemes = useCallback(
+    async (request: LexemeSearchRequest) => {
+      setSearchState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const data = await api.searchLexemes(request);
+        setSearchState({ data, loading: false, error: null });
+        return data;
+      } catch (error) {
+        const apiError = error as ApiError;
+        setSearchState({ data: null, loading: false, error: apiError });
 
-  const getLexemeDetails = useCallback(async (request: LexemeDetailRequest) => {
-    setDetailsState(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      const data = await api.getLexemeDetails(request);
-      setDetailsState({ data, loading: false, error: null });
-      return data;
-    } catch (error) {
-      const apiError = error as ApiError;
-      setDetailsState({ data: null, loading: false, error: apiError });
-      
-      // Show toast notification for error
-      toast({
-        title: "Error loading lexeme details",
-        description: apiError.message,
-        variant: "destructive",
-      });
-      
-      throw apiError;
-    }
-  }, [toast]);
+        // Show toast notification for error
+        toast({
+          title: "Error searching lexemes",
+          description: apiError.message,
+          variant: "destructive",
+        });
+
+        throw apiError;
+      }
+    },
+    [toast]
+  );
+
+  const getLexemeDetails = useCallback(
+    async (request: LexemeDetailRequest) => {
+      setDetailsState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const data = await api.getLexemeDetails(request);
+        setDetailsState({ data, loading: false, error: null });
+        return data;
+      } catch (error) {
+        const apiError = error as ApiError;
+        setDetailsState({ data: null, loading: false, error: apiError });
+
+        // Show toast notification for error
+        toast({
+          title: "Error loading lexeme details",
+          description: apiError.message,
+          variant: "destructive",
+        });
+
+        throw apiError;
+      }
+    },
+    [toast]
+  );
 
   return {
     // Languages
@@ -118,4 +128,4 @@ export const useApi = () => {
     detailsError: detailsState.error,
     getLexemeDetails,
   };
-}; 
+};

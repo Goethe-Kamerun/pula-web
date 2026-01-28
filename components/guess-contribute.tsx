@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { Button } from "@/components/ui/button";
 import { useApiWithStore } from "@/hooks/useApiWithStore";
-import { Tooltip } from "@/components/ui/tooltip-info";
 import {
   Dialog,
   DialogContent,
@@ -63,10 +62,7 @@ export default function GuessContribute({
               >
                 Cancel
               </Button>
-              <Button
-                onClick={handleLogin}
-                className="flex-1"
-              >
+              <Button onClick={handleLogin} className="flex-1">
                 Login
               </Button>
             </div>

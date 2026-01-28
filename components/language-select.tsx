@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -7,7 +6,11 @@ import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/lib/stores";
 import Spinner from "./spinner";
 import { Tooltip } from "@/components/ui/tooltip-info";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -47,7 +50,6 @@ export default function LanguageSelect({
 
   return (
     <div>
-
       <div className=" flex items-center">
         {label && (
           <>

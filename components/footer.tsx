@@ -28,10 +28,20 @@ export default function Footer() {
             </a>
           </div>
           <div>
-            <p className="text-xs mb-2" style={{ color: "#72777d", fontSize: "10px" }}>
-            License for content: <span className="font-bold">CC0 for data</span>, <span className="font-bold">CC-BY-SA for text and media</span> | <a href="https://github.com/ordia-org/ordia/issues" className="underline">Report technical problems on our phabricator board.</a>
+            <p
+              className="text-xs mb-2"
+              style={{ color: "#72777d", fontSize: "10px" }}
+            >
+              License for content:{" "}
+              <span className="font-bold">CC0 for data</span>,{" "}
+              <span className="font-bold">CC-BY-SA for text and media</span> |{" "}
+              <a
+                href="https://github.com/ordia-org/ordia/issues"
+                className="underline"
+              >
+                Report technical problems on our phabricator board.
+              </a>
             </p>
-            
           </div>
           <div>
             <div className="flex items-center space-x-4 text-xs">
@@ -52,7 +62,6 @@ export default function Footer() {
                   className="w-12 inline-block"
                 />
               </a>
-              {/* <span style={{ color: "#a2a9b1" }}>•</span> */}
               <a
                 href="https://www.wikimedia.de/"
                 className="transition-colors hover:underline"

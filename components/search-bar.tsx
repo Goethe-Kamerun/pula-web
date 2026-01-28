@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
-import { Search } from "lucide-react"
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
+import { Search } from "lucide-react";
 
 // Mock data for search suggestions
 const SUGGESTIONS = [
@@ -24,29 +24,28 @@ const SUGGESTIONS = [
   "language",
   "dictionary",
   "vocabulary",
-]
+];
 
 export default function SearchBar() {
-  const [query, setQuery] = useState("")
-  const [suggestions, setSuggestions] = useState<string[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Filter suggestions based on input
   useEffect(() => {
     if (query.trim() === "") {
-      setSuggestions([])
-      return
+      setSuggestions([]);
+      return;
     }
 
-    const filteredSuggestions = SUGGESTIONS.filter((item) => item.toLowerCase().includes(query.toLowerCase())).slice(
-      0,
-      6,
-    ) // Limit to 6 suggestions
+    const filteredSuggestions = SUGGESTIONS.filter((item) =>
+      item.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 6); // Limit to 6 suggestions
 
-    setSuggestions(filteredSuggestions)
-  }, [query])
+    setSuggestions(filteredSuggestions);
+  }, [query]);
 
   // Handle clicks outside the component to close suggestions
   useEffect(() => {
@@ -56,33 +55,33 @@ export default function SearchBar() {
         !suggestionsRef.current.contains(event.target as Node) &&
         !inputRef.current?.contains(event.target as Node)
       ) {
-        setShowSuggestions(false)
+        setShowSuggestions(false);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value)
-    setShowSuggestions(true)
-  }
+    setQuery(e.target.value);
+    setShowSuggestions(true);
+  };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setQuery(suggestion)
-    setShowSuggestions(false)
-    inputRef.current?.focus()
-  }
+    setQuery(suggestion);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setShowSuggestions(false)
+    e.preventDefault();
+    setShowSuggestions(false);
     // Implement actual search functionality here
-    console.log("Searching for:", query)
-  }
+    console.log("Searching for:", query);
+  };
 
   return (
     <div className="relative w-full">
@@ -107,10 +106,10 @@ export default function SearchBar() {
           className="px-8 py-4 transition-colors font-medium text-white"
           style={{ backgroundColor: "#FF6F00" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#E65100"
+            e.currentTarget.style.backgroundColor = "#E65100";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#FF6F00"
+            e.currentTarget.style.backgroundColor = "#FF6F00";
           }}
         >
           Search
@@ -135,10 +134,10 @@ export default function SearchBar() {
               style={{ borderColor: "#CBD5E1" }}
               onClick={() => handleSuggestionClick(suggestion)}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#F0F8FF"
+                e.currentTarget.style.backgroundColor = "#F0F8FF";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent"
+                e.currentTarget.style.backgroundColor = "transparent";
               }}
             >
               <Search className="h-4 w-4 text-gray-400 mr-3" />
@@ -148,5 +147,5 @@ export default function SearchBar() {
         </div>
       )}
     </div>
-  )
+  );
 }
