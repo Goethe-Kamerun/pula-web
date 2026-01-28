@@ -1,4 +1,3 @@
-
 "use client";
 
 import type React from "react";
@@ -83,6 +82,9 @@ export default function SearchInput({
       inputRef.current?.blur();
       return;
     }
+
+    if (searchQuery.length === 0) setClickedLexeme(null);
+
     if (searchQuery.length > 0) setShowSuggestions(true);
   };
 
@@ -107,7 +109,9 @@ export default function SearchInput({
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex((prev) => (prev < lexemes.length - 1 ? prev + 1 : prev));
+        setSelectedIndex((prev) =>
+          prev < lexemes.length - 1 ? prev + 1 : prev
+        );
         break;
       case "ArrowUp":
         e.preventDefault();
@@ -144,20 +148,21 @@ export default function SearchInput({
   };
 
   const clearInput = () => {
-    setSearchQuery('');  // Resets the input value
+    setSearchQuery(""); // Resets the input value
     onChange("");
     setLexemes([]);
     setShowSuggestions(false);
     inputRef.current?.focus();
   };
 
-
-
   return (
     <div className="relative">
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="h-5 w-5" style={{ color: disabled ? "#a2a9b1" : "#72777d" }} />
+          <Search
+            className="h-5 w-5"
+            style={{ color: disabled ? "#a2a9b1" : "#72777d" }}
+          />
         </div>
         <input
           ref={inputRef}
@@ -235,7 +240,10 @@ export default function SearchInput({
             </>
           )}
           {!lexemeLoading && lexemes.length === 0 && (
-            <div className="px-4 py-3 text-sm font-semibold" style={{ color: "#000000" }}>
+            <div
+              className="px-4 py-3 text-sm font-semibold"
+              style={{ color: "#000000" }}
+            >
               No data found
             </div>
           )}
