@@ -4,7 +4,7 @@ const TOKEN_KEY = 'auth_token';
 const USERNAME_KEY = 'auth_username';
 const PREF_LANGS_KEY = 'auth_pref_langs';
 
-interface AuthState {
+export interface AuthState {
   token: string | null;
   username: string | null;
   pref_langs: string | null;
