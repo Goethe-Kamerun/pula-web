@@ -2,7 +2,7 @@
 
 A modern web application for searching lexemes (words) and contributing audio recordings for language learning. Built with Next.js, TypeScript, and Zustand for state management.
 
-## �� What it does
+## What it does
 
 PULA (People's Universal Lexical Access) is a collaborative platform that helps users:
 
@@ -15,7 +15,7 @@ PULA (People's Universal Lexical Access) is a collaborative platform that helps 
 
 - 🔍 **Advanced Search**: Search lexemes by language with detailed results
 - 🎤 **Audio Recording**: Record and contribute pronunciation audio for missing words
-- �� **Label Management**: Add and manage labeled translations
+- 🏷️ **Label Management**: Add and manage labeled translations
 - 🌍 **Multi-language Support**: Support for hundreds of languages
 - 🔐 **OAuth Authentication**: Secure login with Wikimedia OAuth
 - 📱 **Responsive Design**: Works on desktop and mobile devices
