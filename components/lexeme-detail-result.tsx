@@ -142,7 +142,7 @@ export default function LexemeDetailResultComponent({
                         }}
                         onClick={() => onContribute?.("translation")}
                       >
-                        Contribute translation
+                        Add translation
                       </Button>
                     )}
                   </div>
@@ -265,7 +265,7 @@ export default function LexemeDetailResultComponent({
                         }}
                         onClick={() => onContribute?.("audio")}
                       >
-                        Contribute audio translation
+                        Add audio translation
                       </Button>
                     </>
                   )}
